@@ -1,0 +1,23 @@
+{
+  "name": "climacrop-frontend",
+  "version": "1.0.0",
+  "description": "ClimaCrop Frontend - Crop Recommendation System",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "recharts": "^2.15.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^3.1.0",
+    "vite": "^4.1.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
