@@ -14,7 +14,7 @@
 
 ---
 
-## 🌾 Overview
+## Overview
 
 ClimaCrop is an intelligent crop recommendation system that leverages multiple AI models (Decision Tree, XGBoost, Random Forest) to help farmers make data-driven decisions. The platform provides revenue predictions, fertilizer recommendations, pest control insights, and comprehensive agricultural analytics.
 
@@ -29,7 +29,7 @@ ClimaCrop is an intelligent crop recommendation system that leverages multiple A
 
 ---
 
-## ✨ Features
+## Features
 
 ### Core Functionality
 
@@ -66,7 +66,7 @@ ClimaCrop is an intelligent crop recommendation system that leverages multiple A
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Backend
 - **Framework**: FastAPI 0.124.0
@@ -100,13 +100,13 @@ Before you begin, ensure you have the following installed:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/ClimaCrop_gt.git
-cd ClimaCrop_gt
+git clone https://github.com/rafiahkhan/ClimaCrop.git
+cd ClimaCrop
 ```
 
 ### 2. Database Setup
@@ -229,7 +229,7 @@ To stop the servers:
 
 ---
 
-## 📚 Project Structure
+## Project Structure
 
 ```
 ClimaCrop_gt/
@@ -258,7 +258,7 @@ ClimaCrop_gt/
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Core Endpoints
 
@@ -289,7 +289,7 @@ For detailed API documentation, visit `http://127.0.0.1:8000/docs` when the back
 
 ---
 
-## 🌐 Usage Guide
+## Usage Guide
 
 ### Basic Workflow
 
@@ -314,7 +314,7 @@ For detailed API documentation, visit `http://127.0.0.1:8000/docs` when the back
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -335,7 +335,7 @@ Edit `.env` file or set environment variables before running the application.
 
 ---
 
-## 🧪 Development
+## Development
 
 ### Backend Development
 
@@ -370,7 +370,7 @@ Production files will be in `dist/` directory.
 
 ---
 
-## 🔒 Security Notes
+## Security Notes
 
 1. **Database Credentials**: Never commit `.env` file. Use environment variables in production.
 2. **CORS**: Update CORS settings in `backend/main.py` to restrict origins in production.
@@ -379,7 +379,7 @@ Production files will be in `dist/` directory.
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Database Connection Issues
 
@@ -410,15 +410,10 @@ Production files will be in `dist/` directory.
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## Contributors
+- [Rafia Khan](https://github.com/rafiahkhan)
+- [Hashir Saeed](https://github.com/hashir-saeed-002)
+- [Mahnoor Haider](https://github.com)
 
 ### Code Style
 
@@ -428,13 +423,13 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - FastAPI team for the excellent framework
 - React team for the powerful UI library
@@ -443,7 +438,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-## 📞 Support
+## Support
 
 For questions, issues, or contributions:
 
@@ -453,7 +448,7 @@ For questions, issues, or contributions:
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 Future enhancements planned:
 
@@ -470,8 +465,8 @@ Future enhancements planned:
 
 <div align="center">
 
-**Built with ❤️ for Smart Farming**
+**Growing food with intelligence🌱, not guesswork🌾✨**
 
-[Report Bug](https://github.com/yourusername/climacrop/issues) · [Request Feature](https://github.com/yourusername/climacrop/issues)
+[Report Bug](https://github.com/rafiahkhan/ClimaCrop/issues) · [Request Feature](https://github.com/rafiahkhan/ClimaCrop/issues)
 
 </div>
