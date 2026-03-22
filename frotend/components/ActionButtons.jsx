@@ -11,12 +11,8 @@ function ActionButtons({ item, type = 'crop' }) {
   const [showShareMenu, setShowShareMenu] = useState(false);
 
   const handleFavorite = () => {
-    // Create a unique ID using multiple fields to ensure uniqueness
-    // Include variety, year, district, temp_category, and a unique value (revenue/nitrogen/temperature)
-    const uniqueValue = item.expected_revenue || item.nitrogen || item.temperature || item.id || '';
-    const uniqueId = `${type}-${item.variety || item.crop_name || 'item'}-${item.year || ''}-${item.district || ''}-${item.temp_category || ''}-${uniqueValue}`;
     const favoriteItem = {
-      id: uniqueId.replace(/\s+/g, '-').replace(/[^a-z0-9-]/gi, '').toLowerCase(),
+      id: `${type}-${item.variety || item.crop_name || item.id}`,
       type,
       ...item
     };
@@ -62,9 +58,7 @@ function ActionButtons({ item, type = 'crop' }) {
     showNotification('Link copied to clipboard!', 'success');
   };
 
-  // Create the same unique ID for checking favorite status
-  const uniqueValue = item.expected_revenue || item.nitrogen || item.temperature || item.id || '';
-  const itemId = `${type}-${item.variety || item.crop_name || 'item'}-${item.year || ''}-${item.district || ''}-${item.temp_category || ''}-${uniqueValue}`.replace(/\s+/g, '-').replace(/[^a-z0-9-]/gi, '').toLowerCase();
+  const itemId = `${type}-${item.variety || item.crop_name || item.id}`;
   const favorited = isFavorite(itemId);
 
   return (

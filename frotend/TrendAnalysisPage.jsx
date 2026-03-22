@@ -15,11 +15,12 @@ import {
 import Header from './Header';
 import Footer from './Footer';
 import { useLanguage } from './contexts/LanguageContext';
+import { formatAxisTick } from './utils/chartFormatters';
 
 const TEMP_OPTIONS = ['Best', 'Average', 'Worst'];
 
 function TrendAnalysisPage({ username, onLogout }) {
-  const { t, language, translateCrop } = useLanguage();
+  const { t } = useLanguage();
   const [crops, setCrops] = useState([]);
   const [selectedCrop, setSelectedCrop] = useState('');
   const [loading, setLoading] = useState(false);
@@ -124,56 +125,25 @@ function TrendAnalysisPage({ username, onLogout }) {
         </div>
 
         <Container fluid className="flex-grow-1 pb-4 px-4">
-          {/* Filters + Preview stacked row */}
-          <Row className="g-3 align-items-stretch mb-4">
-            <Col lg={4}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('trends.viewTrends')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  <div className="d-flex flex-column gap-3 compact-form">
-                    <Form.Group className="mb-0">
-                      <Form.Label className="fw-bold small mb-1">{t('trends.selectCrop')}</Form.Label>
-                      <Form.Select value={selectedCrop} onChange={(e) => setSelectedCrop(e.target.value)} size="sm">
-                        {crops.map(c => <option key={c} value={c}>{translateCrop(c)}</option>)}
-                      </Form.Select>
-                    </Form.Group>
-                    <Button className="w-100" size="sm" variant="success" onClick={handleTrends} disabled={loading}>
-                      {loading ? <><Spinner size="sm" className="me-2" />{t('common.loading')}</> : t('trends.viewTrends')}
-                    </Button>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col lg={8}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('trends.revenueTrend')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  {trendData && trendData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={260}>
-                      <LineChart data={revenueSeries}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line type="monotone" dataKey="Revenue" stroke="#28a745" strokeWidth={3} />
-                        <Line type="monotone" dataKey="Yield" stroke="#007bff" strokeWidth={3} />
-                        <Line type="monotone" dataKey="Climate" stroke="#ffc107" strokeWidth={3} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div className="text-muted text-center small py-4">
-                      {language === 'ur' ? 'رجحانات دیکھنے کے لیے فصل منتخب کریں' : 'Select a crop to view trends overview'}
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+          <Card className="shadow-sm mb-4 border-0">
+            <Card.Body className="p-4">
+              <Row className="g-3 align-items-end">
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">{t('trends.selectCrop')}</Form.Label>
+                    <Form.Select value={selectedCrop} onChange={(e) => setSelectedCrop(e.target.value)} size="lg">
+                      {crops.map(c => <option key={c} value={c}>{c}</option>)}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={3}>
+                  <Button className="w-100" size="lg" variant="success" onClick={handleTrends} disabled={loading}>
+                    {loading ? <><Spinner size="sm" className="me-2" />{t('common.loading')}</> : t('trends.viewTrends')}
+                  </Button>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
 
           {trendData && trendData.length ? (
             <>
@@ -185,10 +155,10 @@ function TrendAnalysisPage({ username, onLogout }) {
                     </Card.Header>
                     <Card.Body>
                       <ResponsiveContainer width="100%" height={320}>
-                        <LineChart data={revenueSeries}>
+                        <LineChart data={revenueSeries} margin={{ left: 10 }}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
-                          <YAxis />
+                          <YAxis width={55} tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
                           <Tooltip />
                           <Legend />
                           <Line type="monotone" dataKey="Revenue" stroke="#28a745" strokeWidth={3} />
@@ -206,10 +176,10 @@ function TrendAnalysisPage({ username, onLogout }) {
                     </Card.Header>
                     <Card.Body>
                       <ResponsiveContainer width="100%" height={320}>
-                        <AreaChart data={climateSeries}>
+                        <AreaChart data={climateSeries} margin={{ left: 10 }}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
-                          <YAxis />
+                          <YAxis width={45} tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
                           <Tooltip />
                           <Legend />
                           <Area type="monotone" dataKey="Rainfall" stroke="#17a2b8" fill="#17a2b8" fillOpacity={0.45} />

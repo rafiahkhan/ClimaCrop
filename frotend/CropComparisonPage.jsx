@@ -3,40 +3,33 @@ import { Container, Row, Col, Card, Form, Button, Spinner, Badge } from 'react-b
 import {
   BarChart,
   Bar,
-  LabelList,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis
 } from 'recharts';
 import Header from './Header';
 import Footer from './Footer';
 import { useLanguage } from './contexts/LanguageContext';
+import { formatAxisTick, formatTooltipValue } from './utils/chartFormatters';
 
 const TEMP_OPTIONS = ['Best', 'Average', 'Worst'];
 
 function CropComparisonPage({ username, onLogout }) {
-  const { t, language, translateCrop, translateTemp } = useLanguage();
+  const { t } = useLanguage();
   const [crops, setCrops] = useState([]);
   const [cropA, setCropA] = useState('');
   const [cropB, setCropB] = useState('');
   const [temp, setTemp] = useState('Best');
   const [loading, setLoading] = useState(false);
   const [comparison, setComparison] = useState(null);
-
-  const formatShortCurrency = (value) => {
-    if (!value) return '0';
-    if (value >= 1000000000) {
-      return `Rs ${(value / 1000000000).toFixed(2)}B`;
-    } else if (value >= 1000000) {
-      return `Rs ${(value / 1000000).toFixed(2)}M`;
-    } else if (value >= 1000) {
-      return `Rs ${(value / 1000).toFixed(1)}K`;
-    }
-    return `Rs ${value.toFixed(0)}`;
-  };
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/crops')
@@ -125,16 +118,18 @@ function CropComparisonPage({ username, onLogout }) {
   const buildRadarData = () => {
     if (!comparison) return [];
     const { a, b } = comparison;
+    const maxRev = Math.max(a?.expected_revenue || 0, b?.expected_revenue || 0, 1);
+    const maxYield = Math.max(a?.avg_yield_kg_per_acre || 0, b?.avg_yield_kg_per_acre || 0, 1);
     return [
       {
         metric: t('revenue.expectedRevenue'),
-        [cropA]: a?.expected_revenue || 0,
-        [cropB]: b?.expected_revenue || 0
+        [cropA]: ((a?.expected_revenue || 0) / maxRev) * 100,
+        [cropB]: ((b?.expected_revenue || 0) / maxRev) * 100
       },
       {
         metric: t('revenue.yield'),
-        [cropA]: a?.avg_yield_kg_per_acre || 0,
-        [cropB]: b?.avg_yield_kg_per_acre || 0
+        [cropA]: ((a?.avg_yield_kg_per_acre || 0) / maxYield) * 100,
+        [cropB]: ((b?.avg_yield_kg_per_acre || 0) / maxYield) * 100
       },
       {
         metric: t('revenue.climateScore'),
@@ -181,97 +176,84 @@ function CropComparisonPage({ username, onLogout }) {
         </div>
 
         <Container fluid className="flex-grow-1 pb-4 px-4">
-          {/* Filters + Preview stacked row */}
-          <Row className="g-3 align-items-stretch mb-4">
-            <Col lg={4}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('compare.compare')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  <div className="d-flex flex-column gap-3 compact-form">
-                    <Form.Group className="mb-0">
-                      <Form.Label className="fw-bold small mb-1">{t('compare.selectCropA')}</Form.Label>
-                      <Form.Select value={cropA} onChange={(e) => setCropA(e.target.value)} size="sm">
-                        {crops.map(c => <option key={c} value={c}>{translateCrop(c)}</option>)}
-                      </Form.Select>
-                    </Form.Group>
-                    <Form.Group className="mb-0">
-                      <Form.Label className="fw-bold small mb-1">{t('compare.selectCropB')}</Form.Label>
-                      <Form.Select value={cropB} onChange={(e) => setCropB(e.target.value)} size="sm">
-                        {crops.map(c => <option key={c} value={c}>{translateCrop(c)}</option>)}
-                      </Form.Select>
-                    </Form.Group>
-                    <Form.Group className="mb-0">
-                      <Form.Label className="fw-bold small mb-1">{t('compare.selectTemp')}</Form.Label>
-                      <Form.Select value={temp} onChange={(e) => setTemp(e.target.value)} size="sm">
-                        {TEMP_OPTIONS.map(opt => <option key={opt} value={opt}>{translateTemp(opt)}</option>)}
-                      </Form.Select>
-                    </Form.Group>
-                    <Button className="w-100" size="sm" variant="success" onClick={handleCompare} disabled={loading}>
-                      {loading ? <><Spinner size="sm" className="me-2" />{t('common.loading')}</> : t('compare.compare')}
-                    </Button>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col lg={8}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('compare.revenueComparison')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  {comparison ? (
-                    <ResponsiveContainer width="100%" height={260}>
-                      <BarChart data={buildRevenueData()}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis tickFormatter={(value) => formatShortCurrency(value)} />
-                        <Tooltip formatter={(value) => new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 }).format(value)} />
-                        <Legend />
-                        <Bar dataKey="Expected" fill="#28a745">
-                          <LabelList dataKey="Expected" position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '11px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                        <Bar dataKey="DecisionTree" fill="#007bff">
-                          <LabelList dataKey="DecisionTree" position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '11px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                        <Bar dataKey="XGBoost" fill="#ffc107">
-                          <LabelList dataKey="XGBoost" position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '11px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                        <Bar dataKey="RandomForest" fill="#dc3545">
-                          <LabelList dataKey="RandomForest" position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '11px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div className="text-muted text-center small py-4">
-                      {language === 'ur' ? 'موازنہ دیکھنے کے لیے دو فصلوں کا انتخاب کریں' : 'Select two crops to view comparison'}
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+          <Card className="shadow-sm mb-4 border-0">
+            <Card.Body className="p-4">
+              <Row className="g-3">
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">{t('compare.selectCropA')}</Form.Label>
+                    <Form.Select value={cropA} onChange={(e) => setCropA(e.target.value)} size="lg">
+                      {crops.map(c => <option key={c} value={c}>{c}</option>)}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">{t('compare.selectCropB')}</Form.Label>
+                    <Form.Select value={cropB} onChange={(e) => setCropB(e.target.value)} size="lg">
+                      {crops.map(c => <option key={c} value={c}>{c}</option>)}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={2}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">{t('compare.selectTemp')}</Form.Label>
+                    <Form.Select value={temp} onChange={(e) => setTemp(e.target.value)} size="lg">
+                      {TEMP_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={2} className="d-flex align-items-end">
+                  <Button className="w-100" size="lg" variant="success" onClick={handleCompare} disabled={loading}>
+                    {loading ? <><Spinner size="sm" className="me-2" />{t('common.loading')}</> : t('compare.compare')}
+                  </Button>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
 
           {comparison ? (
             <>
-              {bestPick && (
-                <Card className="shadow-sm mb-3 border-success border-2">
-                  <Card.Header className="bg-success text-white">
-                    <h6 className="mb-0">{t('compare.bestPick')}</h6>
-                  </Card.Header>
-                  <Card.Body>
-                    <Row className="align-items-center">
-                      <Col md={8}>
-                        <h4 className="fw-bold mb-2">{bestPick.label}</h4>
-                        <p className="mb-1">{t('compare.expectedRevenue')}: <strong className="text-success">{bestPick.data?.expected_revenue?.toLocaleString() || 'N/A'}</strong></p>
-                        <p className="mb-1">{t('compare.yield')}: <strong>{bestPick.data?.avg_yield_kg_per_acre?.toFixed(1) || 'N/A'}</strong> kg/acre</p>
-                        <p className="mb-0">{t('compare.climateScore')}: <strong>{((bestPick.data?.climate_score || 0) * 10).toFixed(1)}</strong></p>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              )}
+              <Row className="g-3 mb-3">
+                {bestPick && (
+                  <Col lg={4}>
+                    <Card className="shadow-sm border-0 h-100">
+                      <Card.Header className="bg-success text-white">
+                        <h6 className="mb-0">{t('compare.bestPick')}</h6>
+                      </Card.Header>
+                      <Card.Body>
+                        <h4 className="fw-bold">{bestPick.label}</h4>
+                        <p className="mb-1">{t('compare.expectedRevenue')}: {bestPick.data?.expected_revenue != null ? formatTooltipValue(bestPick.data.expected_revenue) + ' PKR' : 'N/A'}</p>
+                        <p className="mb-1">{t('compare.yield')}: {bestPick.data?.avg_yield_kg_per_acre?.toFixed(1) || 'N/A'}</p>
+                        <p className="mb-0">{t('compare.climateScore')}: {((bestPick.data?.climate_score || 0) * 10).toFixed(1)}</p>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                )}
+                <Col lg={8}>
+                  <Card className="shadow-sm border-0 h-100">
+                    <Card.Header className="bg-primary text-white">
+                      <h6 className="mb-0">{t('compare.revenueComparison')}</h6>
+                    </Card.Header>
+                    <Card.Body>
+                      <ResponsiveContainer width="100%" height={320}>
+                        <BarChart data={buildRevenueData()} margin={{ left: 10, right: 10 }}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis width={55} tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
+                          <Tooltip formatter={(value) => formatTooltipValue(value) + ' PKR'} />
+                          <Legend />
+                          <Bar dataKey="Expected" fill="#28a745" />
+                          <Bar dataKey="DecisionTree" fill="#007bff" />
+                          <Bar dataKey="XGBoost" fill="#ffc107" />
+                          <Bar dataKey="RandomForest" fill="#dc3545" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+
               <Row className="g-3 mb-3">
                 <Col lg={6}>
                   <Card className="shadow-sm border-0 h-100">
@@ -280,18 +262,14 @@ function CropComparisonPage({ username, onLogout }) {
                     </Card.Header>
                     <Card.Body>
                       <ResponsiveContainer width="100%" height={280}>
-                        <BarChart data={buildYieldData()} layout="vertical">
+                        <BarChart data={buildYieldData()} layout="vertical" margin={{ left: 20, right: 10 }}>
                           <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis type="number" />
-                          <YAxis type="category" dataKey="name" />
-                          <Tooltip />
+                          <XAxis type="number" tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
+                          <YAxis type="category" dataKey="name" width={100} fontSize={11} />
+                          <Tooltip formatter={(value) => formatTooltipValue(value)} />
                           <Legend />
-                          <Bar dataKey={cropA} fill="#28a745">
-                            <LabelList dataKey={cropA} position="right" style={{ fontSize: '11px', fill: '#333' }} />
-                          </Bar>
-                          <Bar dataKey={cropB} fill="#6f42c1">
-                            <LabelList dataKey={cropB} position="right" style={{ fontSize: '11px', fill: '#333' }} />
-                          </Bar>
+                          <Bar dataKey={cropA} fill="#28a745" />
+                          <Bar dataKey={cropB} fill="#6f42c1" />
                         </BarChart>
                       </ResponsiveContainer>
                     </Card.Body>
@@ -304,19 +282,14 @@ function CropComparisonPage({ username, onLogout }) {
                     </Card.Header>
                     <Card.Body>
                       <ResponsiveContainer width="100%" height={280}>
-                        <BarChart data={buildRadarData()} layout="vertical" margin={{ left: 20, right: 10 }}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis type="number" />
-                          <YAxis type="category" dataKey="metric" />
-                          <Tooltip />
+                        <RadarChart data={buildRadarData()}>
+                          <PolarGrid />
+                          <PolarAngleAxis dataKey="metric" fontSize={11} />
+                          <PolarRadiusAxis tickFormatter={(v) => v} domain={[0, 100]} tickCount={5} fontSize={10} />
+                          <Radar name={cropA} dataKey={cropA} stroke="#28a745" fill="#28a745" fillOpacity={0.5} />
+                          <Radar name={cropB} dataKey={cropB} stroke="#dc3545" fill="#dc3545" fillOpacity={0.3} />
                           <Legend />
-                          <Bar dataKey={cropA} fill="#28a745">
-                            <LabelList dataKey={cropA} position="right" style={{ fontSize: '11px', fill: '#333', fontWeight: 'bold' }} />
-                          </Bar>
-                          <Bar dataKey={cropB} fill="#dc3545">
-                            <LabelList dataKey={cropB} position="right" style={{ fontSize: '11px', fill: '#333', fontWeight: 'bold' }} />
-                          </Bar>
-                        </BarChart>
+                        </RadarChart>
                       </ResponsiveContainer>
                     </Card.Body>
                   </Card>
@@ -332,7 +305,7 @@ function CropComparisonPage({ username, onLogout }) {
                       </Card.Header>
                       <Card.Body className="crop-card-body">
                         <div className="d-flex flex-wrap gap-2">
-                          <Badge bg="success" className="crop-badge">{t('compare.expectedRevenue')}: {item.data?.expected_revenue?.toLocaleString() || 'N/A'}</Badge>
+                          <Badge bg="success" className="crop-badge">{t('compare.expectedRevenue')}: {item.data?.expected_revenue != null ? formatTooltipValue(item.data.expected_revenue) + ' PKR' : 'N/A'}</Badge>
                           <Badge bg="info" className="crop-badge">{t('compare.yield')}: {item.data?.avg_yield_kg_per_acre?.toFixed(1) || 'N/A'}</Badge>
                           <Badge bg="warning" text="dark" className="crop-badge">{t('compare.climateScore')}: {((item.data?.climate_score || 0) * 10).toFixed(1)}</Badge>
                           <Badge bg="secondary" className="crop-badge">{t('revenue.district')}: {item.data?.district || 'N/A'}</Badge>

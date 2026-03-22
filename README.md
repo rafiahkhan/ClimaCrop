@@ -14,22 +14,24 @@
 
 ---
 
-## 🌾 Overview
+## Overview
 
 ClimaCrop is an intelligent crop recommendation system that leverages multiple AI models (Decision Tree, XGBoost, Random Forest) to help farmers make data-driven decisions. The platform provides revenue predictions, fertilizer recommendations, pest control insights, and comprehensive agricultural analytics.
 
 ### Key Highlights
 
+- 🌿 **Fertilizer & Pest Control Recommendations**: NPK values, pesticide advice, and expected disease indicators
+- 📈 **Revenue Prediction**: AI-powered revenue forecasts with temperature-based scenarios (Best/Average/Worst)
+- 💬 **Bilingual Chatbot**: Ask farming questions in English or Urdu—powered by Gemini AI and RAG
 - 🤖 **Multi-Model AI Predictions**: Decision Tree, XGBoost, and Random Forest algorithms
 - 📊 **Interactive Data Visualizations**: Comprehensive charts and analytics
-- 🌍 **Bilingual Support**: Full English and Urdu (RTL) interface
 - 🌓 **Dark Mode**: Modern theme support
 - 📱 **Responsive Design**: Mobile-first approach for all devices
 - 🔒 **Secure & Scalable**: Production-ready architecture
 
 ---
 
-## ✨ Features
+## Features
 
 ### Core Functionality
 
@@ -43,7 +45,7 @@ ClimaCrop is an intelligent crop recommendation system that leverages multiple A
    - NPK (Nitrogen-Phosphorus-Potassium) composition recommendations
    - Fertilizer type distribution analysis
    - Pest control recommendations
-   - Disease predictions
+   - Expected disease indicators from crop data
 
 3. **Crop Comparison Tool**
    - Side-by-side crop comparison
@@ -66,7 +68,7 @@ ClimaCrop is an intelligent crop recommendation system that leverages multiple A
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Backend
 - **Framework**: FastAPI 0.124.0
@@ -89,7 +91,7 @@ ClimaCrop is an intelligent crop recommendation system that leverages multiple A
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before you begin, ensure you have the following installed:
 
@@ -100,13 +102,13 @@ Before you begin, ensure you have the following installed:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/ClimaCrop_gt.git
-cd ClimaCrop_gt
+git clone https://github.com/rafiahkhan/ClimaCrop.git
+cd ClimaCrop
 ```
 
 ### 2. Database Setup
@@ -130,7 +132,7 @@ brew install postgresql
 
 ```bash
 sudo -u postgres psql
-CREATE DATABASE clima;
+CREATE DATABASE climacrop;
 \q
 ```
 
@@ -142,11 +144,16 @@ ALTER USER postgres WITH PASSWORD 'your_password';
 \q
 ```
 
-#### Run Schema Script
+#### Data for the Application
 
-```bash
-psql -U postgres -d clima -f "sql/schema_staging_table.sql"
-```
+**Sample data is not included in this repository.** To run ClimaCrop and see results, you need crop data in your data warehouse.
+
+- **If you have your own data**: Load it into your database and run the app.
+- **If you need the sample dataset** (`all_crops_validated.csv`): Reach out to us—we're happy to share it for learning and evaluation.
+
+**Contact us for the sample dataset:**
+- **Email**: Open an issue on [GitHub](https://github.com/rafiahkhan/ClimaCrop/issues) 
+- **LinkedIn**: [Rafia Khan](https://www.linkedin.com/in/rafia-khan-662327310/) 
 
 ### 3. Environment Configuration
 
@@ -161,7 +168,7 @@ Edit `.env` with your database credentials:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=clima
+DB_NAME=climacrop
 DB_USER=postgres
 DB_PASSWORD=your_password_here
 
@@ -229,7 +236,7 @@ To stop the servers:
 
 ---
 
-## 📚 Project Structure
+## Project Structure
 
 ```
 ClimaCrop_gt/
@@ -244,21 +251,19 @@ ClimaCrop_gt/
 │   ├── contexts/                    # React contexts
 │   ├── utils/                       # Utility functions
 │   └── *.jsx                        # Page components
-├── sql/                             # SQL scripts
-│   ├── schema_staging_table.sql     # Database schema
+├── sql/                             # SQL scripts (sample data not in repo—see Data section)
 │   ├── analytical_queries.sql       # Analytical queries
 │   └── quick_queries.sql            # Quick reference queries
 ├── .env.example                     # Environment variables template
 ├── .gitignore                       # Git ignore rules
 ├── START_BOTH.sh                    # Startup script
 ├── STOP.sh                          # Stop script
-├── load_data_to_dw.py              # Data loading script
 └── README.md                        # This file
 ```
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Core Endpoints
 
@@ -269,8 +274,9 @@ ClimaCrop_gt/
 | `/revenue-prediction` | GET | Get revenue predictions (requires `crop` and `temp` params) |
 | `/fertilizer-pest-control` | GET | Get fertilizer and pest control recommendations (requires `crop` and `temp` params) |
 | `/crop-statistics` | GET | Get crop statistics (requires `crop` param) |
-| `/upload-data` | POST | Upload CSV data to staging table |
 | `/diagnose` | GET | Database diagnostic information |
+| `/api/chatbot/chat` | POST | AI chatbot (Gemini + RAG) |
+| `/api/chatbot/health` | GET | Chatbot service health check |
 
 ### Example API Calls
 
@@ -289,7 +295,7 @@ For detailed API documentation, visit `http://127.0.0.1:8000/docs` when the back
 
 ---
 
-## 🌐 Usage Guide
+## Usage Guide
 
 ### Basic Workflow
 
@@ -297,10 +303,11 @@ For detailed API documentation, visit `http://127.0.0.1:8000/docs` when the back
 2. **Select Language**: Choose between English and Urdu
 3. **Navigate Features**:
    - **Revenue Prediction**: Select crop and temperature to view predictions
-   - **Fertilizer Guide**: Get NPK recommendations and pest control advice
+   - **Fertilizer & Pest Control**: Get NPK recommendations and pest control advice
    - **Crop Comparison**: Compare two crops side-by-side
    - **Insights**: View comprehensive analytics and recommendations
    - **Trends**: Analyze historical trends and patterns
+   - **Chatbot**: Ask farming questions in English or Urdu (AI + RAG)
 4. **Save Favorites**: Save important predictions for quick access
 5. **Export**: Download predictions as PDF or share on social media
 
@@ -314,7 +321,7 @@ For detailed API documentation, visit `http://127.0.0.1:8000/docs` when the back
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -322,7 +329,7 @@ The application uses environment variables for configuration. Key variables:
 
 - `DB_HOST`: Database host (default: localhost)
 - `DB_PORT`: Database port (default: 5432)
-- `DB_NAME`: Database name (default: clima)
+- `DB_NAME`: Database name (default: climacrop)
 - `DB_USER`: Database user (default: postgres)
 - `DB_PASSWORD`: Database password (required)
 - `BACKEND_HOST`: Backend host (default: 127.0.0.1)
@@ -335,7 +342,7 @@ Edit `.env` file or set environment variables before running the application.
 
 ---
 
-## 🧪 Development
+## Development
 
 ### Backend Development
 
@@ -370,7 +377,7 @@ Production files will be in `dist/` directory.
 
 ---
 
-## 🔒 Security Notes
+## Security Notes
 
 1. **Database Credentials**: Never commit `.env` file. Use environment variables in production.
 2. **CORS**: Update CORS settings in `backend/main.py` to restrict origins in production.
@@ -379,7 +386,7 @@ Production files will be in `dist/` directory.
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Database Connection Issues
 
@@ -404,21 +411,16 @@ Production files will be in `dist/` directory.
 
 ### No Data Returned
 
-- Verify data exists in `staging_crop_data` table
+- Verify data exists in your database
 - Check crop names match exactly (case-sensitive)
 - Verify temperature categories are "Best", "Average", or "Worst"
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## Contributors
+- [Rafia Khan](https://github.com/rafiahkhan)
+- [Hashir Saeed](https://github.com/hashir-saeed-002)
+- [Mahnoor Haider](https://github.com/mahnoor114)
 
 ### Code Style
 
@@ -428,13 +430,13 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - FastAPI team for the excellent framework
 - React team for the powerful UI library
@@ -443,17 +445,17 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-## 📞 Support
+## Support
 
 For questions, issues, or contributions:
 
-- Open an issue on GitHub
-- Check existing documentation
-- Review troubleshooting section
+- **Data requests**: Need the sample dataset? Email us or message on [LinkedIn](https://www.linkedin.com/in/rafiahkhan)—see the Data section above.
+- **Bugs & features**: Open an issue on [GitHub](https://github.com/rafiahkhan/ClimaCrop/issues)
+- **Documentation**: Check the troubleshooting section and API docs
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 Future enhancements planned:
 
@@ -470,8 +472,8 @@ Future enhancements planned:
 
 <div align="center">
 
-**Built with ❤️ for Smart Farming**
+**Growing food with intelligence🌱, not guesswork🌾✨**
 
-[Report Bug](https://github.com/yourusername/climacrop/issues) · [Request Feature](https://github.com/yourusername/climacrop/issues)
+[Report Bug](https://github.com/rafiahkhan/ClimaCrop/issues) · [Request Feature](https://github.com/rafiahkhan/ClimaCrop/issues)
 
 </div>

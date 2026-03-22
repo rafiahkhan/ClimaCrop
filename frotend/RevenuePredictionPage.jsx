@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Badge, ProgressBar } from 'react-bootstrap';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Header from './Header';
 import Footer from './Footer';
 import ActionButtons from './components/ActionButtons';
 import { useLanguage } from './contexts/LanguageContext';
+import { formatAxisTick } from './utils/chartFormatters';
 
 const COLORS = ['#28a745', '#007bff', '#ffc107', '#dc3545', '#17a2b8'];
 
 function RevenuePredictionPage({ username, onLogout }) {
-  const { t, language, translateCrop, translateTemp } = useLanguage();
+  const { t, language } = useLanguage();
   const [crops, setCrops] = useState([]);
   const [mainCrops, setMainCrops] = useState([]);
   const [selectedCrop, setSelectedCrop] = useState('');
@@ -99,18 +100,6 @@ function RevenuePredictionPage({ username, onLogout }) {
     }).format(value);
   };
 
-  const formatShortCurrency = (value) => {
-    if (!value) return '0';
-    if (value >= 1000000000) {
-      return `Rs ${(value / 1000000000).toFixed(2)}B`;
-    } else if (value >= 1000000) {
-      return `Rs ${(value / 1000000).toFixed(2)}M`;
-    } else if (value >= 1000) {
-      return `Rs ${(value / 1000).toFixed(1)}K`;
-    }
-    return `Rs ${value.toFixed(0)}`;
-  };
-
   // Prepare chart data
   const revenueChartData = predictions.slice(0, 5).map(pred => ({
     name: pred.variety || 'Variety',
@@ -173,17 +162,14 @@ function RevenuePredictionPage({ username, onLogout }) {
             }
           `}</style>
         </div>
-        <Container fluid className="flex-grow-1 py-4 px-4">
+        <Container fluid className="flex-grow-1 py-3 px-4">
 
-          {/* Filters + Overview stacked row */}
-          <Row className="g-3 align-items-stretch">
-            <Col lg={4}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('revenue.getPredictions')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  <Form onSubmit={handlePredict} className="d-flex flex-column gap-3 compact-form">
+          {/* Selection Form - Compact */}
+          <Card className="shadow-sm mb-3 border-0">
+            <Card.Body className="bg-white p-3">
+              <Form onSubmit={handlePredict}>
+                <Row className="g-2 align-items-end">
+                  <Col md={4}>
                     <Form.Group className="mb-0">
                       <Form.Label className="fw-bold small mb-1">{t('revenue.selectCrop')}</Form.Label>
                       <Form.Select 
@@ -195,19 +181,23 @@ function RevenuePredictionPage({ username, onLogout }) {
                         size="sm"
                         required
                       >
-                        <option value="">{t('common.chooseCrop')}</option>
+                        <option value="">{language === 'ur' ? 'فصل منتخب کریں...' : 'Choose crop...'}</option>
                         {(mainCrops.length > 0 ? mainCrops : ['Rice', 'Cotton', 'Maize']).map(crop => (
-                          <option key={crop} value={crop}>{translateCrop(crop)}</option>
+                          <option key={crop} value={crop}>{crop}</option>
                         ))}
                         {crops.filter(c => !mainCrops.includes(c) && !['Rice', 'Cotton', 'Maize'].includes(c)).length > 0 && (
-                          <optgroup label={t('common.otherCrops')}>
-                            {crops.filter(c => !mainCrops.includes(c) && !['Rice', 'Cotton', 'Maize'].includes(c)).map(crop => (
-                              <option key={crop} value={crop}>{translateCrop(crop)}</option>
-                            ))}
-                          </optgroup>
+                          <>
+                            <optgroup label="Other Crops">
+                              {crops.filter(c => !mainCrops.includes(c) && !['Rice', 'Cotton', 'Maize'].includes(c)).map(crop => (
+                                <option key={crop} value={crop}>{crop}</option>
+                              ))}
+                            </optgroup>
+                          </>
                         )}
                       </Form.Select>
                     </Form.Group>
+                  </Col>
+                  <Col md={4}>
                     <Form.Group className="mb-0">
                       <Form.Label className="fw-bold small mb-1">{t('revenue.selectTemp')}</Form.Label>
                       <Form.Select 
@@ -216,12 +206,14 @@ function RevenuePredictionPage({ username, onLogout }) {
                         size="sm"
                         required
                       >
-                        <option value="">{t('common.chooseTemp')}</option>
+                        <option value="">{language === 'ur' ? 'درجہ حرارت منتخب کریں...' : 'Choose temperature...'}</option>
                         <option value="Best">{t('revenue.bestConditions')}</option>
                         <option value="Average">{t('revenue.averageConditions')}</option>
                         <option value="Worst">{t('revenue.worstConditions')}</option>
                       </Form.Select>
                     </Form.Group>
+                  </Col>
+                  <Col md={4}>
                     <Button 
                       variant="success" 
                       type="submit" 
@@ -231,43 +223,38 @@ function RevenuePredictionPage({ username, onLogout }) {
                     >
                       {loading ? <><Spinner size="sm" className="me-2" />{t('common.loading')}</> : t('revenue.getPredictions')}
                     </Button>
-                  </Form>
-                  {error && (
-                    <Alert variant="danger" dismissible onClose={() => setError(null)} className="mt-3 mb-0 py-2">
-                      <strong>Error:</strong> {error}
-                    </Alert>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col lg={8}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('revenue.overview')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  {statistics.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={260}>
-                      <BarChart data={avgRevenueByTemp}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis tickFormatter={(value) => formatShortCurrency(value)} />
-                        <Tooltip formatter={(value) => formatCurrency(value)} />
-                        <Legend />
-                        <Bar dataKey={t('revenue.expectedRevenue')} fill="#28a745">
-                          <LabelList dataKey={t('revenue.expectedRevenue')} position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '11px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div className="text-muted text-center small py-4">
-                      {language === 'ur' ? 'تجزیہ کے لیے فصل منتخب کریں' : 'Select a crop to view revenue overview'}
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+                  </Col>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+
+          {error && (
+            <Alert variant="danger" dismissible onClose={() => setError(null)} className="mb-3 py-2">
+              <strong>Error:</strong> {error}
+            </Alert>
+          )}
+
+          {/* Statistics Overview - Compact */}
+          {statistics.length > 0 && (
+            <Card className="shadow-sm mb-3 border-0">
+              <Card.Header className="bg-success text-white py-2">
+                <h6 className="mb-0">{t('revenue.overview')}</h6>
+              </Card.Header>
+              <Card.Body className="p-2">
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={avgRevenueByTemp} margin={{ left: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis width={55} tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
+                    <Tooltip formatter={(value) => formatCurrency(value)} />
+                    <Legend />
+                    <Bar dataKey={t('revenue.expectedRevenue')} fill="#28a745" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          )}
 
           {/* Best Prediction Highlight - Compact */}
           {bestPred && (
@@ -285,6 +272,7 @@ function RevenuePredictionPage({ username, onLogout }) {
                     <p className="mb-1 readable-text">{t('revenue.expectedRevenue')}: <span className="fw-bold text-success fs-5">{formatCurrency(bestPred.expected_revenue)}</span></p>
                     <div className="d-flex gap-2 flex-wrap">
                       <Badge bg="info" className="readable-badge">{t('revenue.yield')}: {bestPred.avg_yield_kg_per_acre ? bestPred.avg_yield_kg_per_acre.toFixed(2) : 'N/A'} kg/acre</Badge>
+                      <Badge bg="primary" className="readable-badge">{t('revenue.price')}: {formatCurrency(bestPred.avg_price_per_kg)}/kg</Badge>
                       <Badge bg={bestPred.climate_risk_level === 'Low' ? 'success' : bestPred.climate_risk_level === 'Medium' ? 'warning' : 'danger'} className="readable-badge">
                         {t('revenue.risk')}: {bestPred.climate_risk_level || 'N/A'}
                       </Badge>
@@ -312,24 +300,16 @@ function RevenuePredictionPage({ username, onLogout }) {
                   </Card.Header>
                   <Card.Body className="p-2">
                     <ResponsiveContainer width="100%" height={280}>
-                      <BarChart data={revenueChartData}>
+                      <BarChart data={revenueChartData} margin={{ left: 10 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} fontSize={10} />
-                        <YAxis fontSize={10} tickFormatter={(value) => formatShortCurrency(value)} />
+                        <YAxis width={55} tickFormatter={formatAxisTick} tickCount={6} fontSize={10} />
                         <Tooltip formatter={(value) => formatCurrency(value)} />
                         <Legend wrapperStyle={{ fontSize: '12px' }} />
-                        <Bar dataKey={t('revenue.expectedRevenue')} fill="#28a745">
-                          <LabelList dataKey={t('revenue.expectedRevenue')} position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '10px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                        <Bar dataKey="Decision Tree" fill="#007bff">
-                          <LabelList dataKey="Decision Tree" position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '10px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                        <Bar dataKey="XGBoost" fill="#ffc107">
-                          <LabelList dataKey="XGBoost" position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '10px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                        <Bar dataKey="Random Forest" fill="#dc3545">
-                          <LabelList dataKey="Random Forest" position="top" formatter={(value) => formatShortCurrency(value)} style={{ fontSize: '10px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
+                        <Bar dataKey={t('revenue.expectedRevenue')} fill="#28a745" />
+                        <Bar dataKey="Decision Tree" fill="#007bff" />
+                        <Bar dataKey="XGBoost" fill="#ffc107" />
+                        <Bar dataKey="Random Forest" fill="#dc3545" />
                       </BarChart>
                     </ResponsiveContainer>
                   </Card.Body>
@@ -342,10 +322,10 @@ function RevenuePredictionPage({ username, onLogout }) {
                   </Card.Header>
                   <Card.Body className="p-2">
                     <ResponsiveContainer width="100%" height={280}>
-                      <LineChart data={climateData}>
+                      <LineChart data={climateData} margin={{ left: 10 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} fontSize={10} />
-                        <YAxis fontSize={10} />
+                        <YAxis width={45} tickFormatter={formatAxisTick} tickCount={6} fontSize={10} />
                         <Tooltip />
                         <Legend wrapperStyle={{ fontSize: '12px' }} />
                         <Line type="monotone" dataKey="Rainfall" stroke="#17a2b8" strokeWidth={2} />

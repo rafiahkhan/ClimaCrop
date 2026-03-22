@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Card, Form, Button, Row, Col } from "react-bootstrap";
+import { Container, Card, Form, Button, Row, Col, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "./contexts/LanguageContext";
 
@@ -36,7 +36,11 @@ function LoginPage({ setUsername }) {
                   </div>
                   <h1 className="text-success fw-bold mb-2">{t('login.title')}</h1>
                   <p className="text-muted mb-3">{t('login.subtitle')}</p>
-                  <div className="d-flex justify-content-center gap-2 flex-wrap"></div>
+                  <div className="d-flex justify-content-center gap-2 flex-wrap">
+                    <Badge bg="success" className="px-3 py-2">{t('feature.predictions')}</Badge>
+                    <Badge bg="info" className="px-3 py-2">{t('feature.analytics')}</Badge>
+                    <Badge bg="warning" className="px-3 py-2">{t('feature.revenue')}</Badge>
+                  </div>
                 </div>
 
                 {/* Login Form */}
@@ -77,6 +81,7 @@ function LoginPage({ setUsername }) {
                     size="lg"
                     className="w-100 fw-bold login-button"
                   >
+                    <span className="me-2">🚀</span>
                     {t('login.getStarted')}
                   </Button>
                 </Form>
@@ -100,7 +105,35 @@ function LoginPage({ setUsername }) {
                 </div>
 
                 {/* Features Preview */}
-                <div className="mt-4 pt-4 border-top"></div>
+                <div className="mt-4 pt-4 border-top">
+                  <p className="text-center text-muted small mb-3">{language === 'ur' ? 'آپ کو کیا ملے گا:' : "What you'll get:"}</p>
+                  <Row className="g-2">
+                    <Col xs={6}>
+                      <div className="feature-preview">
+                        <div className="feature-icon">📊</div>
+                        <small>{t('feature.revenue')}</small>
+                      </div>
+                    </Col>
+                    <Col xs={6}>
+                      <div className="feature-preview">
+                        <div className="feature-icon">🌿</div>
+                        <small>{t('feature.fertilizer')}</small>
+                      </div>
+                    </Col>
+                    <Col xs={6}>
+                      <div className="feature-preview">
+                        <div className="feature-icon">📈</div>
+                        <small>{t('feature.predictions')}</small>
+                      </div>
+                    </Col>
+                    <Col xs={6}>
+                      <div className="feature-preview">
+                        <div className="feature-icon">🎯</div>
+                        <small>{t('feature.analytics')}</small>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
 
                 {/* Footer Note */}
                 <div className="text-center mt-4">

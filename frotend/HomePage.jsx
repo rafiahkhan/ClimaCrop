@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Header from './Header';
 import Footer from './Footer';
 import { useLanguage } from './contexts/LanguageContext';
+import { formatAxisTick } from './utils/chartFormatters';
 
 function HomePage({ username, onLogout }) {
   const [crops, setCrops] = useState([]);
   const [mainCrops, setMainCrops] = useState([]);
   const [stats, setStats] = useState(null);
-  const { t, language, translateCrop } = useLanguage();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/crops')
@@ -41,18 +42,6 @@ function HomePage({ username, onLogout }) {
     [t('revenue.expectedRevenue')]: s.avg_expected_revenue || 0
   })) : [];
 
-  const formatShortCurrency = (value) => {
-    if (!value) return '0';
-    if (value >= 1000000000) {
-      return `Rs ${(value / 1000000000).toFixed(2)}B`;
-    } else if (value >= 1000000) {
-      return `Rs ${(value / 1000000).toFixed(2)}M`;
-    } else if (value >= 1000) {
-      return `Rs ${(value / 1000).toFixed(1)}K`;
-    }
-    return `Rs ${value.toFixed(0)}`;
-  };
-
   return (
     <>
       <Header username={username} onLogout={onLogout} />
@@ -72,20 +61,6 @@ function HomePage({ username, onLogout }) {
             .hero-section {
               background: linear-gradient(135deg, #2d5016 0%, #3d7a1f 50%, #4a9b25 100%);
               color: #ffffff;
-            }
-            [dir="rtl"] .hero-title {
-              font-size: 2rem !important;
-              line-height: 1.4 !important;
-            }
-            [dir="rtl"] .hero-subtitle {
-              font-size: 1.1rem !important;
-              line-height: 1.6 !important;
-            }
-            [dir="rtl"] .hero-description {
-              font-size: 0.95rem !important;
-              line-height: 1.7 !important;
-            }
-            .hero-section {
               box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             }
             [data-theme="dark"] .hero-section {
@@ -118,7 +93,7 @@ function HomePage({ username, onLogout }) {
                 <Card.Body className="p-3 readable-card-body">
                   <div className="stat-icon mb-2">📊</div>
                   <h3 className="mb-0 readable-stat-number">3</h3>
-                  <small className="readable-stat-label">{t('home.aiModels')}</small>
+                  <small className="readable-stat-label">AI Models</small>
                 </Card.Body>
               </Card>
             </Col>
@@ -127,7 +102,7 @@ function HomePage({ username, onLogout }) {
                 <Card.Body className="p-3 readable-card-body">
                   <div className="stat-icon mb-2">🎯</div>
                   <h3 className="mb-0 readable-stat-number">98%</h3>
-                  <small className="readable-stat-label">{t('home.accuracy')}</small>
+                  <small className="readable-stat-label">Accuracy</small>
                 </Card.Body>
               </Card>
             </Col>
@@ -136,7 +111,7 @@ function HomePage({ username, onLogout }) {
                 <Card.Body className="p-3 readable-card-body">
                   <div className="stat-icon mb-2">⚡</div>
                   <h3 className="mb-0 readable-stat-number">24/7</h3>
-                  <small className="readable-stat-label">{t('home.available')}</small>
+                  <small className="readable-stat-label">Available</small>
                 </Card.Body>
               </Card>
             </Col>
@@ -188,12 +163,9 @@ function HomePage({ username, onLogout }) {
                 </Card.Body>
               </Card>
             </Col>
-          </Row>
 
-          {/* Last 2 Cards - Centered */}
-          <Row className="g-3 mb-4 justify-content-center">
             <Col md={6} lg={4}>
-              <Card className="h-100 shadow-lg border-0 hover-card feature-card feature-card-5 readable-card">
+              <Card className="h-100 shadow-lg border-0 hover-card feature-card feature-card-4 readable-card">
                 <Card.Body className="text-center p-4 readable-card-body">
                   <div className="feature-icon-large mb-3">🔍</div>
                   <Card.Title className="h5 mb-3 fw-bold readable-feature-title">{t('home.compare')}</Card.Title>
@@ -208,7 +180,7 @@ function HomePage({ username, onLogout }) {
             </Col>
 
             <Col md={6} lg={4}>
-              <Card className="h-100 shadow-lg border-0 hover-card feature-card feature-card-6 readable-card">
+              <Card className="h-100 shadow-lg border-0 hover-card feature-card feature-card-5 readable-card">
                 <Card.Body className="text-center p-4 readable-card-body">
                   <div className="feature-icon-large mb-3">📈</div>
                   <Card.Title className="h5 mb-3 fw-bold readable-feature-title">{t('home.trends')}</Card.Title>
@@ -221,7 +193,44 @@ function HomePage({ username, onLogout }) {
                 </Card.Body>
               </Card>
             </Col>
+
+            <Col md={6} lg={4}>
+              <Card className="h-100 shadow-lg border-0 hover-card feature-card feature-card-6 readable-card">
+                <Card.Body className="text-center p-4 readable-card-body">
+                  <div className="feature-icon-large mb-3">🤖</div>
+                  <Card.Title className="h5 mb-3 fw-bold readable-feature-title">{t('home.chatbot')}</Card.Title>
+                  <Card.Text className="readable-feature-text mb-3">
+                    {t('home.chatbotDesc')}
+                  </Card.Text>
+                  <Button as={Link} to="/chatbot" variant="info" size="lg" className="w-100">
+                    {language === 'ur' ? '← ' : ''}{t('nav.chatbot')}{language === 'en' ? ' →' : ''}
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
           </Row>
+
+          {/* Quick Stats - Compact */}
+          {statsChartData.length > 0 && (
+            <Card className="shadow-sm mb-4 border-0">
+              <Card.Header className="bg-light py-2 readable-card-header">
+                <h5 className="mb-0 fw-bold readable-header-text">{t('revenue.overview')}</h5>
+                <small className="text-muted readable-small-text">{t('revenue.averageRevenue')} {mainCrops[0]}</small>
+              </Card.Header>
+              <Card.Body className="p-2">
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={statsChartData} margin={{ left: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis width={55} tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
+                    <Tooltip formatter={(value) => new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 }).format(value)} />
+                    <Legend />
+                    <Bar dataKey={t('revenue.expectedRevenue')} fill="#28a745" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          )}
 
           {/* How It Works - Compact */}
           <Card className="shadow-sm mb-4 border-0 readable-card">
@@ -267,14 +276,14 @@ function HomePage({ username, onLogout }) {
             <Col md={6}>
               <Card className="border-0 shadow-sm h-100 readable-card">
                 <Card.Body className="p-3 readable-card-body">
-                  <h5 className="text-success mb-2 readable-heading">{t('home.keyFeatures')}</h5>
+                  <h5 className="text-success mb-2 readable-heading">Key Features</h5>
                   <ul className="list-unstyled mb-0 small readable-text">
-                    <li className="mb-1">{t('home.keyFeaturesDesc1')}</li>
-                    <li className="mb-1">{t('home.keyFeaturesDesc2')}</li>
-                    <li className="mb-1">{t('home.keyFeaturesDesc3')}</li>
-                    <li className="mb-1">{t('home.keyFeaturesDesc4')}</li>
-                    <li className="mb-1">{t('home.keyFeaturesDesc5')}</li>
-                    <li>{t('home.keyFeaturesDesc6')}</li>
+                    <li className="mb-1">Multiple AI model predictions</li>
+                    <li className="mb-1">Interactive charts and visualizations</li>
+                    <li className="mb-1">Comprehensive fertilizer recommendations (N-P-K)</li>
+                    <li className="mb-1">Pest control and expected disease insights from crop data</li>
+                    <li className="mb-1">Climate risk assessment</li>
+                    <li>Revenue forecasting with detailed breakdown</li>
                   </ul>
                 </Card.Body>
               </Card>
@@ -287,7 +296,7 @@ function HomePage({ username, onLogout }) {
                     <strong className="small readable-text">{t('home.mainCrops')}:</strong>
                     <div className="mt-1">
                       {mainCrops.map(crop => (
-                        <Badge bg="success" className="me-1 mb-1 readable-badge" key={crop}>{translateCrop(crop)}</Badge>
+                        <Badge bg="success" className="me-1 mb-1 readable-badge" key={crop}>{crop}</Badge>
                       ))}
                     </div>
                   </div>
@@ -296,7 +305,7 @@ function HomePage({ username, onLogout }) {
                       <strong className="small readable-text">{t('home.otherCrops')}:</strong>
                       <div className="mt-1">
                         {crops.filter(c => !mainCrops.includes(c)).slice(0, 5).map(crop => (
-                          <Badge bg="secondary" className="me-1 mb-1 readable-badge" key={crop}>{translateCrop(crop)}</Badge>
+                          <Badge bg="secondary" className="me-1 mb-1 readable-badge" key={crop}>{crop}</Badge>
                         ))}
                         {crops.filter(c => !mainCrops.includes(c)).length > 5 && (
                           <Badge bg="light" text="dark" className="readable-badge">+{crops.filter(c => !mainCrops.includes(c)).length - 5} more</Badge>
@@ -392,13 +401,13 @@ function HomePage({ username, onLogout }) {
           background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         }
         .feature-card-4 {
-          background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
-        }
-        .feature-card-5 {
           background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
         }
-        .feature-card-6 {
+        .feature-card-5 {
           background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        }
+        .feature-card-6 {
+          background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
         }
 
         /* Dark mode text readability for homepage */

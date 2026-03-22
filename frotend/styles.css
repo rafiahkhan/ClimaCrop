@@ -482,20 +482,6 @@ body {
   color: white;
 }
 
-/* Compact form tweaks to reduce spacing and button bulk */
-.compact-form .form-control,
-.compact-form .form-select {
-  padding: 0.5rem 0.75rem;
-}
-
-.compact-form .btn {
-  padding: 0.6rem 0.9rem;
-}
-
-.compact-form .fw-bold {
-  margin-bottom: 0.25rem;
-}
-
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
@@ -668,6 +654,15 @@ body {
   color: #e4e4e4;
 }
 
+.chatbot-card {
+  width: 340px;
+  max-height: 420px;
+}
+
+.chatbot-widget-messages {
+  font-size: 0.875rem;
+}
+
 /* Responsive Images */
 img {
   max-width: 100%;
@@ -716,12 +711,7 @@ img {
 /* RTL (Right-to-Left) Support for Urdu */
 [dir="rtl"] {
   direction: rtl;
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-  font-size: 15px !important;
-  line-height: 1.8 !important;
   text-align: right;
-  word-spacing: 0.1em;
-  letter-spacing: 0.02em;
 }
 
 [dir="rtl"] .container,
@@ -759,7 +749,6 @@ img {
 
 [dir="rtl"] .text-start { text-align: right !important; }
 [dir="rtl"] .text-end { text-align: left !important; }
-[dir="rtl"] .text-center { text-align: center !important; }
 
 [dir="rtl"] .float-start { float: right !important; }
 [dir="rtl"] .float-end { float: left !important; }
@@ -776,95 +765,38 @@ img {
 [dir="rtl"] .form-control,
 [dir="rtl"] .form-select {
   text-align: right;
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-  font-size: 16px !important;
 }
 
 [dir="rtl"] .form-label {
   text-align: right;
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-  font-size: 15px !important;
-  font-weight: 600 !important;
 }
 
 /* RTL Navigation */
 [dir="rtl"] .navbar-nav {
   direction: rtl;
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-  flex-wrap: wrap;
-  gap: 0.25rem;
 }
 
 [dir="rtl"] .nav-link {
   text-align: right;
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-  font-size: 0.85rem !important;
-  padding: 0.5rem 0.6rem !important;
-  white-space: nowrap;
-}
-
-[dir="rtl"] .navbar {
-  min-height: 60px;
-}
-
-[dir="rtl"] .navbar-nav .nav-link {
-  margin: 0 0.1rem !important;
 }
 
 /* RTL Cards */
 [dir="rtl"] .card {
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-}
-
-[dir="rtl"] .card.text-center {
-  text-align: center !important;
+  text-align: right;
 }
 
 [dir="rtl"] .card-body {
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-  font-size: 16px !important;
-  line-height: 1.8 !important;
-}
-
-[dir="rtl"] .card-body.text-center {
-  text-align: center !important;
+  text-align: right;
 }
 
 /* RTL Buttons */
 [dir="rtl"] .btn {
-  text-align: center !important; /* Keep buttons centered */
-  direction: ltr; /* Keep button text LTR for proper centering */
+  text-align: center; /* Keep buttons centered */
 }
 
 /* RTL Badges */
 [dir="rtl"] .badge {
   direction: rtl;
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-  font-size: 14px !important;
-}
-
-/* RTL Text Elements */
-[dir="rtl"] p,
-[dir="rtl"] span,
-[dir="rtl"] div,
-[dir="rtl"] h1,
-[dir="rtl"] h2,
-[dir="rtl"] h3,
-[dir="rtl"] h4,
-[dir="rtl"] h5,
-[dir="rtl"] h6,
-[dir="rtl"] li,
-[dir="rtl"] td,
-[dir="rtl"] th {
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-}
-
-[dir="rtl"] .btn {
-  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Al Qalam Taj Nastaleeq', 'Nafees Web Naskh', 'Urdu Naskh Asiatype', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
-  font-size: 14px !important;
-  padding: 0.5rem 1rem !important;
-  white-space: normal;
-  word-wrap: break-word;
 }
 
 /* Additional readability fixes for bg-opacity backgrounds */

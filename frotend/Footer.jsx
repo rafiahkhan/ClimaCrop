@@ -34,10 +34,10 @@ function Footer() {
           <Col md={4}>
             <h5 className="footer-title mb-3">{language === 'ur' ? 'خصوصیات' : 'Features'}</h5>
             <ul className="footer-links list-unstyled">
-              <li className="footer-feature">{t('feature.predictions')}</li>
-              <li className="footer-feature">{t('feature.analytics')}</li>
-              <li className="footer-feature">{language === 'ur' ? 'ماہر سفارشات' : 'Expert Recommendations'}</li>
-              <li className="footer-feature">{language === 'ur' ? 'حقیقی وقت کی بصیرتیں' : 'Real-time Insights'}</li>
+              <li className="footer-feature">✅ {t('feature.predictions')}</li>
+              <li className="footer-feature">✅ {t('feature.analytics')}</li>
+              <li className="footer-feature">✅ {language === 'ur' ? 'ماہر سفارشات' : 'Expert Recommendations'}</li>
+              <li className="footer-feature">✅ {language === 'ur' ? 'حقیقی وقت کی بصیرتیں' : 'Real-time Insights'}</li>
             </ul>
           </Col>
         </Row>
@@ -45,7 +45,7 @@ function Footer() {
         <Row>
           <Col className="text-center py-3">
             <p className="footer-copyright mb-0">
-              <span className="copyright-icon">©</span> 2024 {t('login.title')}. {language === 'ur' ? 'تمام حقوق محفوظ ہیں۔' : 'All rights reserved.'} | 
+              <span className="copyright-icon">©</span> 2025 {t('login.title')}. {language === 'ur' ? 'تمام حقوق محفوظ ہیں۔' : 'All rights reserved.'} | 
               {language === 'ur' ? 'کسانوں کے لیے ڈیزائن کیا گیا' : 'Designed for farmers'} | {language === 'ur' ? 'مصنوعی ذہانت اور ڈیٹا سائنس سے چلایا گیا' : 'Powered by AI & Data Science'}
             </p>
           </Col>
@@ -101,7 +101,7 @@ function Footer() {
         }
 
         .footer-feature {
-          color: #bdc3c7;
+          color: #95a5a6;
           margin-bottom: 0.5rem;
         }
 

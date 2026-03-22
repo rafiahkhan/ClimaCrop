@@ -31,24 +31,8 @@ export const LanguageProvider = ({ children }) => {
     return translations[language][key] || key;
   };
 
-  // Helper function to translate crop names
-  const translateCrop = (cropName) => {
-    if (!cropName) return '';
-    const cropKey = `crop.${cropName.toLowerCase()}`;
-    const translated = translations[language][cropKey];
-    return translated || cropName; // Return original if translation not found
-  };
-
-  // Helper function to translate temperature options
-  const translateTemp = (tempOption) => {
-    if (!tempOption) return '';
-    const tempKey = `temp.${tempOption.toLowerCase()}`;
-    const translated = translations[language][tempKey];
-    return translated || tempOption; // Return original if translation not found
-  };
-
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, translateCrop, translateTemp }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -84,7 +68,8 @@ const translations = {
     'nav.compare': 'Compare',
     'nav.trends': 'Trends',
     'nav.favorites': 'Favorites',
-    'nav.upload': 'Upload',
+    'nav.upload': 'Upload Data',
+    'nav.chatbot': 'Chatbot',
     'nav.logout': 'Logout',
     'nav.welcome': 'Welcome',
     
@@ -94,15 +79,8 @@ const translations = {
     'home.description': 'Get intelligent insights for better crop management, revenue prediction, and optimal fertilizer usage',
     'home.aiRevenue': 'AI Revenue Prediction',
     'home.aiRevenueDesc': 'Get accurate revenue predictions using multiple AI models including Decision Tree, XGBoost, and Random Forest algorithms with detailed charts.',
-    'home.xgboost': 'XGBoost',
-    'home.keyFeaturesDesc1': 'Multiple AI model predictions',
-    'home.keyFeaturesDesc2': 'Interactive charts and visualizations',
-    'home.keyFeaturesDesc3': 'Comprehensive fertilizer recommendations (N-P-K: Nitrogen-Phosphorus-Potassium)',
-    'home.keyFeaturesDesc4': 'Pest control and disease predictions',
-    'home.keyFeaturesDesc5': 'Climate risk assessment',
-    'home.keyFeaturesDesc6': 'Revenue forecasting with detailed breakdown',
     'home.fertilizer': 'Fertilizer & Pest Control',
-    'home.fertilizerDesc': 'Get expert recommendations for fertilizers (Nitrogen-Phosphorus-Potassium values), pesticides, and disease management with NPK charts and climate analysis.',
+    'home.fertilizerDesc': 'Get expert recommendations for fertilizers (N-P-K values), pesticides, and disease management with NPK charts and climate analysis.',
     'home.insights': 'Insights & Analytics',
     'home.insightsDesc': 'Explore comprehensive crop data with interactive visualizations, performance analysis, and smart recommendations.',
     'home.upload': 'Upload Data',
@@ -111,6 +89,8 @@ const translations = {
     'home.compareDesc': 'Compare different crops side-by-side to find the best option for your farming conditions and maximize your revenue.',
     'home.trends': 'Trend Analysis',
     'home.trendsDesc': 'Analyze historical trends and patterns to make informed decisions about crop selection and farming strategies.',
+    'home.chatbot': 'AI Chatbot',
+    'home.chatbotDesc': 'Ask questions about crops, farming, fertilizers, and get intelligent answers powered by Gemini AI and RAG.',
     'home.availableCrops': 'Available Crops',
     'home.mainCrops': 'Main Crops',
     'home.otherCrops': 'Other Crops',
@@ -122,10 +102,6 @@ const translations = {
     'home.step2Desc': 'Select temperature category (Best/Average/Worst) for your area.',
     'home.step3': 'Get AI Insights',
     'home.step3Desc': 'Receive detailed predictions, recommendations, and visualizations.',
-    'home.availableCrops': 'Available Crops',
-    'home.aiModels': 'AI Models',
-    'home.accuracy': 'Accuracy',
-    'home.available': 'Available',
     
     // Revenue Page
     'revenue.title': 'AI Crop Revenue Prediction',
@@ -159,6 +135,11 @@ const translations = {
     // Fertilizer Page
     'fertilizer.title': 'Fertilizer & Pest Control Recommendations',
     'fertilizer.subtitle': 'Get expert recommendations for fertilizers, pesticides, and disease management',
+    'fertilizer.selectCrop': 'Select Crop',
+    'fertilizer.selectTemp': 'Temperature Category',
+    'fertilizer.bestConditions': 'Best Conditions',
+    'fertilizer.averageConditions': 'Average Conditions',
+    'fertilizer.worstConditions': 'Worst Conditions',
     'fertilizer.getRecommendations': 'Get Recommendations',
     'fertilizer.npk': 'NPK Composition (N-P-K)',
     'fertilizer.typeDistribution': 'Fertilizer Type Distribution',
@@ -178,13 +159,6 @@ const translations = {
     'fertilizer.temp': 'Temp',
     'fertilizer.getStarted': 'Get Fertilizer & Pest Control Recommendations',
     'fertilizer.getStartedDesc': 'Select a crop and temperature category to get expert recommendations',
-    'fertilizer.keyFeatures': 'Key Features',
-    'fertilizer.feature1': 'Multiple AI model predictions',
-    'fertilizer.feature2': 'Interactive charts and visualizations',
-    'fertilizer.feature3': 'Comprehensive fertilizer recommendations (N-P-K)',
-    'fertilizer.feature4': 'Pest control and disease predictions',
-    'fertilizer.feature5': 'Climate risk assessment',
-    'fertilizer.feature6': 'Revenue forecasting with detailed breakdown',
     
     // Insights Page
     'insights.title': 'Advanced Insights & Analytics',
@@ -239,8 +213,8 @@ const translations = {
     'trends.avgYield': 'Average Yield',
     'trends.riskLevel': 'Climate Risk',
     
-    // Upload Page
-    'upload.title': 'Upload Crop Data',
+    // Upload Page (CSV Data Upload)
+    'upload.title': 'Upload Data',
     'upload.subtitle': 'Upload CSV file to update the data warehouse',
     'upload.selectFile': 'Select CSV File',
     'upload.fileFormat': 'File must be in CSV format matching the staging table structure',
@@ -276,6 +250,45 @@ const translations = {
     'support.q3': 'How do I upload new data?',
     'support.a3': 'Open Upload page, choose your CSV, and click Upload Data.',
     
+    // Chatbot Page
+    'chatbot.title': 'AI Chatbot Assistant',
+    'chatbot.subtitle': 'Ask questions about crops, farming, and get intelligent answers',
+    'chatbot.selectLanguage': 'Select Chatbot Language',
+    'chatbot.english': 'English',
+    'chatbot.urdu': 'Urdu',
+    'chatbot.ready': 'Ready',
+    'chatbot.notReady': 'Not Ready',
+    'chatbot.notAvailable': 'Chatbot service is not available',
+    'chatbot.connectionError': 'Could not connect to chatbot service',
+    'chatbot.chatWithBot': 'Chat with AI Assistant',
+    'chatbot.clearChat': 'Clear Chat',
+    'chatbot.welcomeMessage': 'Welcome! I\'m your AI farming assistant',
+    'chatbot.startChatting': 'Select a language and start asking questions',
+    'chatbot.example1': 'What crops grow in summer?',
+    'chatbot.example2': 'Tell me about cotton farming',
+    'chatbot.example3': 'Best fertilizer for rice?',
+    'chatbot.welcomeMessageChatbotUr': 'خوش آمدید! میں آپ کا مصنوعی ذہانت کھیتی باڑی معاون ہوں',
+    'chatbot.startChattingChatbotUr': 'زبان منتخب کریں اور سوالات پوچھنا شروع کریں',
+    'chatbot.example1ChatbotUr': 'گرمی میں کون سی فصلیں اگتی ہیں؟',
+    'chatbot.example2ChatbotUr': 'کپاس کی کھیتی باڑی کے بارے میں بتائیں',
+    'chatbot.example3ChatbotUr': 'چاول کے لیے بہترین کھاد؟',
+    'chatbot.placeholder': 'Type your question here...',
+    'chatbot.send': 'Send',
+    'chatbot.sending': 'Sending',
+    'chatbot.thinking': 'Thinking',
+    'chatbot.contextUsed': 'Context used',
+    'chatbot.chunks': 'chunks',
+    'chatbot.sendError': 'Error sending message',
+    'chatbot.errorMessage': 'Sorry, I encountered an error',
+    'chatbot.switchLanguageConfirm': 'Switching language will clear chat history. Continue?',
+    'chatbot.clearChatConfirm': 'Are you sure you want to clear the chat?',
+    'chatbot.feature1Title': 'RAG-Powered',
+    'chatbot.feature1Desc': 'Answers based on your crop database',
+    'chatbot.feature2Title': 'Bilingual Support',
+    'chatbot.feature2Desc': 'Chat in English or Urdu',
+    'chatbot.feature3Title': 'Smart Responses',
+    'chatbot.feature3Desc': 'AI-powered intelligent answers',
+    
     // Common
     'common.loading': 'Loading...',
     'common.error': 'Error',
@@ -292,30 +305,6 @@ const translations = {
     'common.favorite': 'Favorite',
     'common.removeFavorite': 'Remove from favorites',
     'common.addFavorite': 'Add to favorites',
-    'common.item': 'Item',
-    
-    // Crop Names
-    'crop.rice': 'Rice',
-    'crop.cotton': 'Cotton',
-    'crop.maize': 'Maize',
-    'crop.wheat': 'Wheat',
-    
-    // Temperature Options
-    'temp.best': 'Best',
-    'temp.average': 'Average',
-    'temp.worst': 'Worst',
-    
-    // Other
-    'common.chooseCrop': 'Choose crop...',
-    'common.chooseTemp': 'Choose temperature...',
-    'common.otherCrops': 'Other Crops',
-    'common.na': 'N/A',
-    'common.kgPerAcre': 'kg/acre',
-    
-    // Risk Levels
-    'risk.low': 'Low',
-    'risk.medium': 'Medium',
-    'risk.high': 'High',
   },
   ur: {
     // Login Page
@@ -345,7 +334,8 @@ const translations = {
     'nav.compare': 'موازنہ',
     'nav.trends': 'رجحانات',
     'nav.favorites': 'پسندیدہ',
-    'nav.upload': 'اپ لوڈ',
+    'nav.upload': 'ڈیٹا اپ لوڈ',
+    'nav.chatbot': 'چیٹ بوٹ',
     'nav.logout': 'لاگ آؤٹ',
     'nav.welcome': 'خوش آمدید',
     
@@ -354,32 +344,23 @@ const translations = {
     'home.subtitle': 'ذہین کھیتی باڑی کے لیے مصنوعی ذہانت سے چلنے والا فصل کی سفارش کا نظام',
     'home.description': 'بہتر فصل کی انتظام، آمدنی کی پیشین گوئی، اور بہترین کھاد کے استعمال کے لیے ذہین بصیرتیں حاصل کریں',
     'home.aiRevenue': 'مصنوعی ذہانت کی آمدنی کی پیشین گوئی',
-    'home.aiRevenueDesc': 'فیصلہ درخت، ایکس جی بووسٹ، اور رینڈم فاریسٹ الگورتھمز سمیت متعدد مصنوعی ذہانت کے ماڈلز کا استعمال کرتے ہوئے درست آمدنی کی پیشین گوئیاں حاصل کریں۔',
-    'home.xgboost': 'ایکس جی بووسٹ',
+    'home.aiRevenueDesc': 'فیصلہ درخت، XGBoost، اور رینڈم فاریسٹ الگورتھمز سمیت متعدد مصنوعی ذہانت کے ماڈلز کا استعمال کرتے ہوئے درست آمدنی کی پیشین گوئیاں حاصل کریں۔',
     'home.fertilizer': 'کھاد اور کیڑے مار ادویات کا کنٹرول',
-    'home.fertilizerDesc': 'کھاد (نائٹروجن-فاسفورس-پوٹاشیم اقدار)، کیڑے مار ادویات، اور بیماری کے انتظام کے لیے ماہر سفارشات حاصل کریں۔',
+    'home.fertilizerDesc': 'کھاد (N-P-K اقدار)، کیڑے مار ادویات، اور بیماری کے انتظام کے لیے ماہر سفارشات حاصل کریں۔',
     'home.insights': 'بصیرتیں اور تجزیات',
     'home.insightsDesc': 'انٹرایکٹو تصورات، کارکردگی کے تجزیے، اور ذہین سفارشات کے ساتھ جامع فصل کے ڈیٹا کو دریافت کریں۔',
-    'home.upload': 'ڈیٹا اپ لوڈ کریں',
+    'home.upload': 'ڈیٹا اپ لوڈ',
     'home.uploadDesc': 'نئے فصل کے ڈیٹا کے ساتھ ڈیٹا وئیر ہاؤس کو اپ ڈیٹ کرنے کے لیے CSV فائلیں اپ لوڈ کریں۔',
     'home.compare': 'فصلیں موازنہ کریں',
     'home.compareDesc': 'اپنی کھیتی باڑی کی شرائط کے لیے بہترین آپشن تلاش کرنے کے لیے مختلف فصلیں ایک دوسرے کے ساتھ موازنہ کریں۔',
     'home.trends': 'رجحان کا تجزیہ',
     'home.trendsDesc': 'فصل کی انتخاب اور کھیتی باڑی کی حکمت عملیوں کے بارے میں باخبر فیصلے کرنے کے لیے تاریخی رجحانات اور نمونوں کا تجزیہ کریں۔',
-    'home.availableCrops': 'دستیاب فصلیں',
-    'home.aiModels': 'مصنوعی ذہانت کے ماڈل',
-    'home.accuracy': 'درستگی',
-    'home.available': 'دستیاب',
+    'home.chatbot': 'مصنوعی ذہانت چیٹ بوٹ',
+    'home.chatbotDesc': 'فصلوں، کھیتی باڑی، کھاد کے بارے میں سوالات پوچھیں اور Gemini AI اور RAG سے چلنے والے ذہین جوابات حاصل کریں۔',
     'home.availableCrops': 'دستیاب فصلیں',
     'home.mainCrops': 'اہم فصلیں',
     'home.otherCrops': 'دیگر فصلیں',
     'home.keyFeatures': 'اہم خصوصیات',
-    'home.keyFeaturesDesc1': 'متعدد مصنوعی ذہانت کے ماڈل کی پیشین گوئیاں',
-    'home.keyFeaturesDesc2': 'انٹرایکٹو چارٹس اور تصورات',
-    'home.keyFeaturesDesc3': 'جامع کھاد کی سفارشات (N-P-K: نائٹروجن-فاسفورس-پوٹاشیم)',
-    'home.keyFeaturesDesc4': 'کیڑے مار ادویات اور بیماری کی پیشین گوئیاں',
-    'home.keyFeaturesDesc5': 'موسمی خطرے کا اندازہ',
-    'home.keyFeaturesDesc6': 'تفصیلی تقسیم کے ساتھ آمدنی کی پیشین گوئی',
     'home.howItWorks': 'یہ کیسے کام کرتا ہے',
     'home.step1': 'اپنی فصل منتخب کریں',
     'home.step1Desc': 'ہمارے ڈیٹا بیس سے چنیں جس میں چاول، گندم، مکئی، اور مزید شامل ہیں۔',
@@ -420,6 +401,11 @@ const translations = {
     // Fertilizer Page
     'fertilizer.title': 'کھاد اور کیڑے مار ادویات کی سفارشات',
     'fertilizer.subtitle': 'کھاد، کیڑے مار ادویات، اور بیماری کے انتظام کے لیے ماہر سفارشات حاصل کریں',
+    'fertilizer.selectCrop': 'فصل منتخب کریں',
+    'fertilizer.selectTemp': 'درجہ حرارت کی قسم',
+    'fertilizer.bestConditions': 'بہترین شرائط',
+    'fertilizer.averageConditions': 'اوسط شرائط',
+    'fertilizer.worstConditions': 'بدترین شرائط',
     'fertilizer.getRecommendations': 'سفارشات حاصل کریں',
     'fertilizer.npk': 'NPK ترکیب (N-P-K)',
     'fertilizer.typeDistribution': 'کھاد کی قسم کی تقسیم',
@@ -494,7 +480,7 @@ const translations = {
     'trends.riskLevel': 'موسمی خطرہ',
     
     // Upload Page
-    'upload.title': 'فصل کا ڈیٹا اپ لوڈ کریں',
+    'upload.title': 'ڈیٹا اپ لوڈ',
     'upload.subtitle': 'ڈیٹا وئیر ہاؤس کو اپ ڈیٹ کرنے کے لیے CSV فائل اپ لوڈ کریں',
     'upload.selectFile': 'CSV فائل منتخب کریں',
     'upload.fileFormat': 'فائل CSV فارمیٹ میں ہونی چاہیے جو اسٹیجنگ ٹیبل کی ساخت سے میل کھاتی ہو',
@@ -530,6 +516,45 @@ const translations = {
     'support.q3': 'نیا ڈیٹا کیسے اپ لوڈ کروں؟',
     'support.a3': 'اپ لوڈ صفحہ کھولیں، اپنی CSV منتخب کریں، اور "ڈیٹا اپ لوڈ کریں" پر کلک کریں۔',
     
+    // Chatbot Page
+    'chatbot.title': 'مصنوعی ذہانت چیٹ بوٹ معاون',
+    'chatbot.subtitle': 'فصلوں، کھیتی باڑی کے بارے میں سوالات پوچھیں اور ذہین جوابات حاصل کریں',
+    'chatbot.selectLanguage': 'چیٹ بوٹ کی زبان منتخب کریں',
+    'chatbot.english': 'انگریزی',
+    'chatbot.urdu': 'اردو',
+    'chatbot.ready': 'تیار',
+    'chatbot.notReady': 'تیار نہیں',
+    'chatbot.notAvailable': 'چیٹ بوٹ سروس دستیاب نہیں ہے',
+    'chatbot.connectionError': 'چیٹ بوٹ سروس سے رابطہ قائم نہیں ہو سکا',
+    'chatbot.chatWithBot': 'مصنوعی ذہانت معاون کے ساتھ بات کریں',
+    'chatbot.clearChat': 'چیٹ صاف کریں',
+    'chatbot.welcomeMessage': 'خوش آمدید! میں آپ کا مصنوعی ذہانت کھیتی باڑی معاون ہوں',
+    'chatbot.startChatting': 'زبان منتخب کریں اور سوالات پوچھنا شروع کریں',
+    'chatbot.example1': 'گرمی میں کون سی فصلیں اگتی ہیں؟',
+    'chatbot.example2': 'کپاس کی کھیتی باڑی کے بارے میں بتائیں',
+    'chatbot.example3': 'چاول کے لیے بہترین کھاد؟',
+    'chatbot.welcomeMessageChatbotUr': 'خوش آمدید! میں آپ کا مصنوعی ذہانت کھیتی باڑی معاون ہوں',
+    'chatbot.startChattingChatbotUr': 'زبان منتخب کریں اور سوالات پوچھنا شروع کریں',
+    'chatbot.example1ChatbotUr': 'گرمی میں کون سی فصلیں اگتی ہیں؟',
+    'chatbot.example2ChatbotUr': 'کپاس کی کھیتی باڑی کے بارے میں بتائیں',
+    'chatbot.example3ChatbotUr': 'چاول کے لیے بہترین کھاد؟',
+    'chatbot.placeholder': 'یہاں اپنا سوال لکھیں...',
+    'chatbot.send': 'بھیجیں',
+    'chatbot.sending': 'بھیج رہا ہے',
+    'chatbot.thinking': 'سوچ رہا ہے',
+    'chatbot.contextUsed': 'استعمال شدہ سیاق و سباق',
+    'chatbot.chunks': 'حصے',
+    'chatbot.sendError': 'پیغام بھیجنے میں خرابی',
+    'chatbot.errorMessage': 'معذرت، مجھے ایک خرابی کا سامنا ہوا',
+    'chatbot.switchLanguageConfirm': 'زبان تبدیل کرنے سے چیٹ کی تاریخ صاف ہو جائے گی۔ جاری رکھیں؟',
+    'chatbot.clearChatConfirm': 'کیا آپ واقعی چیٹ صاف کرنا چاہتے ہیں؟',
+    'chatbot.feature1Title': 'RAG سے چلنے والا',
+    'chatbot.feature1Desc': 'آپ کے فصلوں کے ڈیٹا بیس پر مبنی جوابات',
+    'chatbot.feature2Title': 'دو لسانی تعاون',
+    'chatbot.feature2Desc': 'انگریزی یا اردو میں بات کریں',
+    'chatbot.feature3Title': 'ذہین جوابات',
+    'chatbot.feature3Desc': 'مصنوعی ذہانت سے چلنے والے ذہین جوابات',
+    
     // Common
     'common.loading': 'لوڈ ہو رہا ہے...',
     'common.error': 'خرابی',
@@ -546,30 +571,6 @@ const translations = {
     'common.favorite': 'پسندیدہ',
     'common.removeFavorite': 'پسندیدہ سے ہٹائیں',
     'common.addFavorite': 'پسندیدہ میں شامل کریں',
-    'common.item': 'آئٹم',
-    
-    // Crop Names
-    'crop.rice': 'چاول',
-    'crop.cotton': 'کپاس',
-    'crop.maize': 'مکئی',
-    'crop.wheat': 'گندم',
-    
-    // Temperature Options
-    'temp.best': 'بہترین',
-    'temp.average': 'اوسط',
-    'temp.worst': 'بدترین',
-    
-    // Other
-    'common.chooseCrop': 'فصل منتخب کریں...',
-    'common.chooseTemp': 'درجہ حرارت منتخب کریں...',
-    'common.otherCrops': 'دیگر فصلیں',
-    'common.na': 'دستیاب نہیں',
-    'common.kgPerAcre': 'کلوگرام/ایکڑ',
-    
-    // Risk Levels
-    'risk.low': 'کم',
-    'risk.medium': 'درمیانی',
-    'risk.high': 'زیادہ',
   }
 };
 

@@ -23,7 +23,7 @@ except ImportError:
 # ========================================
 DB_CONFIG = {
     'host': os.getenv('DB_HOST', 'localhost'),
-    'database': os.getenv('DB_NAME', 'clima'),
+    'database': os.getenv('DB_NAME', 'climacrop'),
     'user': os.getenv('DB_USER', 'postgres'),
     'password': os.getenv('DB_PASSWORD', '123'),
     'port': int(os.getenv('DB_PORT', '5432'))

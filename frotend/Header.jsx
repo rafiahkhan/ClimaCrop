@@ -45,6 +45,9 @@ function Header({ username, onLogout }) {
             <Nav.Link as={Link} to="/trends" className="nav-link-modern">
               <span>{t('nav.trends')}</span>
             </Nav.Link>
+            <Nav.Link as={Link} to="/chatbot" className="nav-link-modern">
+              <span>{t('nav.chatbot')}</span>
+            </Nav.Link>
             <Nav.Link as={Link} to="/favorites" className="nav-link-modern">
               <span>{t('nav.favorites')}</span>
             </Nav.Link>
@@ -102,11 +105,6 @@ function Header({ username, onLogout }) {
           color: #ffffff !important;
           font-weight: 700;
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-          white-space: nowrap;
-        }
-
-        [dir="rtl"] .brand-logo {
-          font-size: 1.3rem !important;
         }
 
         .brand-logo:hover {
@@ -118,21 +116,13 @@ function Header({ username, onLogout }) {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.5rem 0.75rem !important;
+          padding: 0.5rem 1rem !important;
           border-radius: 8px;
           transition: all 0.3s ease;
-          margin: 0 0.15rem;
+          margin: 0 0.25rem;
           color: #ffffff !important;
           font-weight: 500;
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-          white-space: nowrap;
-          font-size: 0.9rem;
-        }
-
-        [dir="rtl"] .nav-link-modern {
-          font-size: 0.85rem !important;
-          padding: 0.5rem 0.6rem !important;
-          margin: 0 0.1rem;
         }
 
         .nav-link-modern:hover {
@@ -159,13 +149,6 @@ function Header({ username, onLogout }) {
           font-weight: 500;
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          white-space: nowrap;
-          font-size: 0.9rem;
-        }
-
-        [dir="rtl"] .user-welcome {
-          font-size: 0.85rem !important;
-          padding: 0.5rem 0.75rem;
         }
 
         .logout-link {

@@ -16,7 +16,8 @@ import InsightsPage from "./InsightsPage.jsx";
 import FavoritesPage from "./FavoritesPage.jsx";
 import CropComparisonPage from "./CropComparisonPage.jsx";
 import TrendAnalysisPage from "./TrendAnalysisPage.jsx";
-import SupportWidget from "./components/SupportWidget.jsx";
+import ChatbotPage from "./ChatbotPage.jsx";
+import ChatbotWidget from "./components/ChatbotWidget.jsx";
 
 function App() {
   const [username, setUsername] = useState("");
@@ -94,13 +95,22 @@ function App() {
                 path="/favorites" 
                 element={
                   <FavoritesPage 
-                    username={username}
+                    username={username} 
+                    onLogout={handleLogout}
+                  />
+                } 
+              />
+              <Route 
+                path="/chatbot" 
+                element={
+                  <ChatbotPage 
+                    username={username} 
                     onLogout={handleLogout}
                   />
                 } 
               />
             </Routes>
-            <SupportWidget />
+            <ChatbotWidget username={username} />
           </Router>
           </LanguageProvider>
         </FavoritesProvider>

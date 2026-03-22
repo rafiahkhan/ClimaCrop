@@ -10,11 +10,11 @@ import ActionButtons from './components/ActionButtons';
 function FavoritesPage({ username, onLogout }) {
   const { favorites, removeFavorite } = useFavorites();
   const { showNotification } = useNotification();
-  const { t, language, translateCrop, translateTemp } = useLanguage();
+  const { t, language } = useLanguage();
 
   const handleRemove = (id) => {
     removeFavorite(id);
-    showNotification(t('common.removeFavorite'), 'info');
+    showNotification('Removed from favorites', 'info');
   };
 
   const groupByType = () => {
@@ -92,11 +92,11 @@ function FavoritesPage({ username, onLogout }) {
                   </h3>
                   <Row className="g-3">
                     {items.map((item, idx) => (
-                      <Col xs={12} sm={6} md={4} key={item.id || idx}>
+                      <Col md={6} lg={4} key={item.id || idx}>
                         <Card className="h-100 shadow-sm border-0">
                           <Card.Header className="bg-primary text-white">
                             <div className="d-flex justify-content-between align-items-center">
-                              <strong>{item.variety || translateCrop(item.crop_name) || `${t('common.item')} ${idx + 1}`}</strong>
+                              <strong>{item.variety || item.crop_name || `Item ${idx + 1}`}</strong>
                               <Button
                                 variant="light"
                                 size="sm"
@@ -110,19 +110,19 @@ function FavoritesPage({ username, onLogout }) {
                           <Card.Body>
                             {item.expected_revenue && (
                               <div className="mb-2">
-                                <small className="text-muted">{t('revenue.expectedRevenue')}</small>
+                                <small className="text-muted">Expected Revenue</small>
                                 <h5 className="text-success mb-0">{formatCurrency(item.expected_revenue)}</h5>
                               </div>
                             )}
                             {item.avg_yield_kg_per_acre && (
                               <div className="mb-2">
-                                <small className="text-muted">{t('revenue.yield')}</small>
-                                <p className="mb-0">{item.avg_yield_kg_per_acre.toFixed(2)} {t('common.kgPerAcre')}</p>
+                                <small className="text-muted">Yield</small>
+                                <p className="mb-0">{item.avg_yield_kg_per_acre.toFixed(2)} kg/acre</p>
                               </div>
                             )}
                             {item.fertilizer_type && (
                               <div className="mb-2">
-                                <small className="text-muted">{t('fertilizer.fertilizer')}</small>
+                                <small className="text-muted">Fertilizer</small>
                                 <p className="mb-0">{item.fertilizer_type}</p>
                               </div>
                             )}
@@ -130,7 +130,7 @@ function FavoritesPage({ username, onLogout }) {
                               <Badge bg="info" className="me-1">{item.district}</Badge>
                             )}
                             {item.temp_category && (
-                              <Badge bg="warning">{translateTemp(item.temp_category)}</Badge>
+                              <Badge bg="warning">{item.temp_category}</Badge>
                             )}
                             <div className="mt-3">
                               <ActionButtons item={item} type={type} />

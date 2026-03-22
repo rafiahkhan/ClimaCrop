@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Badge, Alert, Spinner, Tabs, Tab, ProgressBar } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Badge, Alert, Spinner, Tabs, Tab } from 'react-bootstrap';
 import { 
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, 
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LabelList
+  AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
 import Header from './Header';
 import Footer from './Footer';
 import { useLanguage } from './contexts/LanguageContext';
+import { formatAxisTick } from './utils/chartFormatters';
 
 const COLORS = ['#28a745', '#007bff', '#ffc107', '#dc3545', '#17a2b8', '#6f42c1', '#fd7e14'];
 
 function InsightsPage({ username, onLogout }) {
-  const { t, language, translateCrop } = useLanguage();
+  const { t, language } = useLanguage();
   const [crops, setCrops] = useState([]);
   const [selectedCrop, setSelectedCrop] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -116,33 +117,6 @@ function InsightsPage({ username, onLogout }) {
     }).format(value);
   };
 
-  const formatShortCurrency = (value) => {
-    if (!value) return '0';
-    const numValue = typeof value === 'number' ? value : value * 1000000;
-    if (numValue >= 1000000000) {
-      return `Rs ${(numValue / 1000000000).toFixed(2)}B`;
-    } else if (numValue >= 1000000) {
-      return `Rs ${(numValue / 1000000).toFixed(2)}M`;
-    } else if (numValue >= 1000) {
-      return `Rs ${(numValue / 1000).toFixed(1)}K`;
-    }
-    return `Rs ${numValue.toFixed(0)}`;
-  };
-
-  const formatShortCurrencyFromMillions = (value) => {
-    if (!value) return '0';
-    // Value is already in millions, so multiply by 1M to get full value
-    const numValue = value * 1000000;
-    if (numValue >= 1000000000) {
-      return `Rs ${(numValue / 1000000000).toFixed(2)}B`;
-    } else if (numValue >= 1000000) {
-      return `Rs ${(numValue / 1000000).toFixed(2)}M`;
-    } else if (numValue >= 1000) {
-      return `Rs ${(numValue / 1000).toFixed(1)}K`;
-    }
-    return `Rs ${numValue.toFixed(0)}`;
-  };
-
   // Prepare chart data
   const revenueComparisonData = comparisonData ? comparisonData.map(item => ({
     name: item.category,
@@ -208,82 +182,54 @@ function InsightsPage({ username, onLogout }) {
         </div>
 
         <Container fluid className="flex-grow-1 pb-4 px-4">
-          {/* Filters + Overview stacked row */}
-          <Row className="g-3 align-items-stretch mb-4">
-            <Col lg={4}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('insights.analyze')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  <div className="d-flex flex-column gap-3 compact-form">
-                    <Form.Group className="mb-0">
-                      <Form.Label className="fw-bold small mb-1">{t('insights.selectCrop')}</Form.Label>
-                      <Form.Select
-                        value={selectedCrop}
-                        onChange={(e) => setSelectedCrop(e.target.value)}
-                        size="sm"
-                      >
-                        {crops.map(crop => (
-                          <option key={crop} value={crop}>{translateCrop(crop)}</option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                    <Form.Group className="mb-0">
-                      <Form.Label className="fw-bold small mb-1">{t('insights.selectDistrict')}</Form.Label>
-                      <Form.Select
-                        value={selectedDistrict}
-                        onChange={(e) => setSelectedDistrict(e.target.value)}
-                        size="sm"
-                      >
-                        <option value="">{t('insights.allDistricts')}</option>
-                        <option value="Lahore">Lahore</option>
-                        <option value="Karachi">Karachi</option>
-                        <option value="Faisalabad">Faisalabad</option>
-                        <option value="Bahawalnagar">Bahawalnagar</option>
-                      </Form.Select>
-                    </Form.Group>
-                    <Button
-                      variant="success"
-                      size="sm"
-                      className="w-100"
-                      onClick={fetchInsights}
-                      disabled={loading}
+          {/* Filters */}
+          <Card className="shadow-sm mb-4 border-0">
+            <Card.Body className="p-4">
+              <Row className="g-3 align-items-end">
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">{t('insights.selectCrop')}</Form.Label>
+                    <Form.Select
+                      value={selectedCrop}
+                      onChange={(e) => setSelectedCrop(e.target.value)}
+                      size="lg"
                     >
-                      {loading ? <><Spinner size="sm" className="me-2" />{t('common.loading')}</> : t('insights.analyze')}
-                    </Button>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col lg={8}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('insights.revenueComparison')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  {comparisonData && comparisonData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={260}>
-                      <BarChart data={revenueComparisonData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis tickFormatter={(value) => formatShortCurrencyFromMillions(value)} />
-                        <Tooltip formatter={(value) => formatCurrency(value * 1000000)} />
-                        <Legend />
-                        <Bar dataKey="Revenue" fill="#28a745">
-                          <LabelList dataKey="Revenue" position="top" formatter={(value) => formatShortCurrencyFromMillions(value)} style={{ fontSize: '11px', fill: '#333', fontWeight: 'bold' }} />
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div className="text-muted text-center small py-4">
-                      {language === 'ur' ? 'تجزیہ دیکھنے کے لیے فصل منتخب کریں' : 'Select a crop to view insights overview'}
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+                      {crops.map(crop => (
+                        <option key={crop} value={crop}>{crop}</option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">{t('insights.selectDistrict')}</Form.Label>
+                    <Form.Select
+                      value={selectedDistrict}
+                      onChange={(e) => setSelectedDistrict(e.target.value)}
+                      size="lg"
+                    >
+                      <option value="">{t('insights.allDistricts')}</option>
+                      <option value="Lahore">Lahore</option>
+                      <option value="Karachi">Karachi</option>
+                      <option value="Faisalabad">Faisalabad</option>
+                      <option value="Bahawalnagar">Bahawalnagar</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Button
+                    variant="success"
+                    size="lg"
+                    className="w-100"
+                    onClick={fetchInsights}
+                    disabled={loading}
+                  >
+                    {loading ? <><Spinner size="sm" className="me-2" />{t('common.loading')}</> : t('insights.analyze')}
+                  </Button>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
 
           {/* Tabs */}
           <Tabs
@@ -333,28 +279,18 @@ function InsightsPage({ username, onLogout }) {
                   <Col lg={6}>
                     <Card className="shadow-sm border-0 h-100">
                       <Card.Header className="bg-primary text-white">
-                        <h6 className="mb-0">Revenue Distribution by Conditions</h6>
+                        <h6 className="mb-0">{t('insights.revenueComparison')}</h6>
                       </Card.Header>
                       <Card.Body>
                         <ResponsiveContainer width="100%" height={300}>
-                          <PieChart>
-                            <Pie
-                              data={revenueComparisonData}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                              outerRadius={100}
-                              fill="#8884d8"
-                              dataKey="Revenue"
-                            >
-                              {revenueComparisonData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={['#28a745', '#17a2b8', '#dc3545'][index % 3]} />
-                              ))}
-                            </Pie>
+                          <BarChart data={revenueComparisonData} margin={{ left: 10 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis width={55} tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
                             <Tooltip formatter={(value) => formatCurrency(value * 1000000)} />
                             <Legend />
-                          </PieChart>
+                            <Bar dataKey="Revenue" fill="#28a745" />
+                          </BarChart>
                         </ResponsiveContainer>
                       </Card.Body>
                     </Card>
@@ -366,10 +302,10 @@ function InsightsPage({ username, onLogout }) {
                       </Card.Header>
                       <Card.Body>
                         <ResponsiveContainer width="100%" height={300}>
-                          <AreaChart data={revenueComparisonData}>
+                          <AreaChart data={revenueComparisonData} margin={{ left: 10 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" />
-                            <YAxis />
+                            <YAxis width={55} tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
                             <Tooltip />
                             <Legend />
                             <Area type="monotone" dataKey="Revenue" stackId="1" stroke="#28a745" fill="#28a745" fillOpacity={0.6} />
@@ -385,60 +321,24 @@ function InsightsPage({ username, onLogout }) {
 
             <Tab eventKey="performance" title={t('insights.performance')}>
               {performanceRadarData.length > 0 && (
-                <Row className="g-3 mb-4">
-                  {performanceRadarData.map((item, idx) => {
-                    const maxValue = Math.max(item.Best, item.Average, item.Worst);
-                    return (
-                      <Col md={4} key={idx}>
-                        <Card className="shadow-sm border-0 h-100">
-                          <Card.Header className={`${idx === 0 ? 'bg-success' : idx === 1 ? 'bg-info' : 'bg-danger'} text-white`}>
-                            <h6 className="mb-0 fw-bold">{item.category}</h6>
-                          </Card.Header>
-                          <Card.Body>
-                            <div className="mb-3">
-                              <div className="d-flex justify-content-between mb-1">
-                                <small className="fw-bold">Best Conditions</small>
-                                <small className="fw-bold text-success">{item.Best.toFixed(1)}%</small>
-                              </div>
-                              <ProgressBar 
-                                variant="success" 
-                                now={item.Best} 
-                                max={maxValue}
-                                className="mb-3"
-                                style={{ height: '20px' }}
-                              />
-                            </div>
-                            <div className="mb-3">
-                              <div className="d-flex justify-content-between mb-1">
-                                <small className="fw-bold">Average Conditions</small>
-                                <small className="fw-bold text-info">{item.Average.toFixed(1)}%</small>
-                              </div>
-                              <ProgressBar 
-                                variant="info" 
-                                now={item.Average} 
-                                max={maxValue}
-                                className="mb-3"
-                                style={{ height: '20px' }}
-                              />
-                            </div>
-                            <div>
-                              <div className="d-flex justify-content-between mb-1">
-                                <small className="fw-bold">Worst Conditions</small>
-                                <small className="fw-bold text-danger">{item.Worst.toFixed(1)}%</small>
-                              </div>
-                              <ProgressBar 
-                                variant="danger" 
-                                now={item.Worst} 
-                                max={maxValue}
-                                style={{ height: '20px' }}
-                              />
-                            </div>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    );
-                  })}
-                </Row>
+                <Card className="shadow-sm border-0 mb-4">
+                  <Card.Header className="bg-warning text-dark">
+                    <h6 className="mb-0">{t('insights.performanceRadar')}</h6>
+                  </Card.Header>
+                  <Card.Body>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <RadarChart data={performanceRadarData}>
+                        <PolarGrid />
+                        <PolarAngleAxis dataKey="category" fontSize={11} />
+                        <PolarRadiusAxis tickFormatter={(v) => Math.round(v)} tickCount={5} fontSize={10} />
+                        <Radar name="Best" dataKey="Best" stroke="#28a745" fill="#28a745" fillOpacity={0.6} />
+                        <Radar name="Average" dataKey="Average" stroke="#007bff" fill="#007bff" fillOpacity={0.6} />
+                        <Radar name="Worst" dataKey="Worst" stroke="#dc3545" fill="#dc3545" fillOpacity={0.6} />
+                        <Legend />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </Card.Body>
+                </Card>
               )}
 
               <Row className="g-3">
@@ -477,10 +377,10 @@ function InsightsPage({ username, onLogout }) {
                     </Card.Header>
                     <Card.Body>
                       <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={revenueComparisonData}>
+                        <LineChart data={revenueComparisonData} margin={{ left: 10 }}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="name" />
-                          <YAxis />
+                          <YAxis width={55} tickFormatter={formatAxisTick} tickCount={6} fontSize={11} />
                           <Tooltip />
                           <Legend />
                           <Line type="monotone" dataKey="Revenue" stroke="#28a745" strokeWidth={3} />

@@ -97,6 +97,14 @@ Icon
 all_crops_validated.csv
 *.csv.backup
 
+# Screenshots (not in repo)
+1.png
+2.png
+3.png
+
+# ChromaDB vector store (generated at runtime)
+backend/vectordb/
+
 # Temporary files
 tmp/
 temp/

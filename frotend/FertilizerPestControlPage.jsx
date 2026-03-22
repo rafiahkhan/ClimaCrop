@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Badge, ProgressBar, Accordion } from 'react-bootstrap';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LineChart, Line, LabelList } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 import Header from './Header';
 import Footer from './Footer';
 import ActionButtons from './components/ActionButtons';
 import { useLanguage } from './contexts/LanguageContext';
+import { formatAxisTick } from './utils/chartFormatters';
 
 const COLORS = ['#28a745', '#007bff', '#ffc107', '#dc3545', '#17a2b8', '#6f42c1'];
 
 function FertilizerPestControlPage({ username, onLogout }) {
-  const { t, language, translateCrop, translateTemp } = useLanguage();
+  const { t, language } = useLanguage();
   const [crops, setCrops] = useState([]);
   const [mainCrops, setMainCrops] = useState([]);
   const [selectedCrop, setSelectedCrop] = useState('');
@@ -39,8 +40,7 @@ function FertilizerPestControlPage({ username, onLogout }) {
   }, []);
 
   const handleGetRecommendations = (e) => {
-    if (e?.preventDefault) e.preventDefault();
-    if (e?.stopPropagation) e.stopPropagation();
+    e.preventDefault();
     if (!selectedCrop || !selectedTemp) {
       setError(t('fertilizer.selectCrop') + ' & ' + t('fertilizer.selectTemp'));
       return;
@@ -132,19 +132,16 @@ function FertilizerPestControlPage({ username, onLogout }) {
             }
           `}</style>
         </div>
-        <Container fluid className="flex-grow-1 py-4 px-4">
+        <Container fluid className="flex-grow-1 py-3 px-4">
 
-          {/* Filters + Overview stacked row */}
-          <Row className="g-3 align-items-stretch mb-3">
-            <Col lg={4}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('fertilizer.getRecommendations')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  <div className="d-flex flex-column gap-3 compact-form">
+          {/* Selection Form - Compact */}
+          <Card className="shadow-sm mb-3 border-0">
+            <Card.Body className="bg-white p-3">
+              <Form onSubmit={handleGetRecommendations}>
+                <Row className="g-2 align-items-end">
+                  <Col md={4}>
                     <Form.Group className="mb-0">
-                      <Form.Label className="fw-bold small mb-1">Select Crop</Form.Label>
+                      <Form.Label className="fw-bold small mb-1">{t('fertilizer.selectCrop')}</Form.Label>
                       <Form.Select 
                         value={selectedCrop} 
                         onChange={(e) => {
@@ -152,91 +149,61 @@ function FertilizerPestControlPage({ username, onLogout }) {
                           setRecommendations([]);
                         }}
                         size="sm"
+                        required
                       >
-                        <option value="">{t('common.chooseCrop')}</option>
+                        <option value="">{language === 'ur' ? 'فصل منتخب کریں...' : 'Choose crop...'}</option>
                         {(mainCrops.length > 0 ? mainCrops : ['Rice', 'Cotton', 'Maize']).map(crop => (
-                          <option key={crop} value={crop}>{translateCrop(crop)}</option>
+                          <option key={crop} value={crop}>{crop}</option>
                         ))}
                         {crops.filter(c => !mainCrops.includes(c) && !['Rice', 'Cotton', 'Maize'].includes(c)).length > 0 && (
-                          <optgroup label={t('common.otherCrops')}>
-                            {crops.filter(c => !mainCrops.includes(c) && !['Rice', 'Cotton', 'Maize'].includes(c)).map(crop => (
-                              <option key={crop} value={crop}>{translateCrop(crop)}</option>
-                            ))}
-                          </optgroup>
+                          <>
+                            <optgroup label="Other Crops">
+                              {crops.filter(c => !mainCrops.includes(c) && !['Rice', 'Cotton', 'Maize'].includes(c)).map(crop => (
+                                <option key={crop} value={crop}>{crop}</option>
+                              ))}
+                            </optgroup>
+                          </>
                         )}
                       </Form.Select>
                     </Form.Group>
+                  </Col>
+                  <Col md={4}>
                     <Form.Group className="mb-0">
-                      <Form.Label className="fw-bold small mb-1">Temperature Category</Form.Label>
+                      <Form.Label className="fw-bold small mb-1">{t('fertilizer.selectTemp')}</Form.Label>
                       <Form.Select 
                         value={selectedTemp} 
                         onChange={(e) => setSelectedTemp(e.target.value)}
                         size="sm"
+                        required
                       >
-                        <option value="">{t('common.chooseTemp')}</option>
-                        <option value="Best">{translateTemp('Best')}</option>
-                        <option value="Average">{translateTemp('Average')}</option>
-                        <option value="Worst">{translateTemp('Worst')}</option>
+                        <option value="">{language === 'ur' ? 'درجہ حرارت منتخب کریں...' : 'Choose temperature...'}</option>
+                        <option value="Best">{t('fertilizer.bestConditions')}</option>
+                        <option value="Average">{t('fertilizer.averageConditions')}</option>
+                        <option value="Worst">{t('fertilizer.worstConditions')}</option>
                       </Form.Select>
                     </Form.Group>
+                  </Col>
+                  <Col md={4}>
                     <Button 
                       variant="success" 
-                      type="button" 
+                      type="submit" 
                       size="sm"
                       className="w-100"
                       disabled={loading}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleGetRecommendations(e);
-                      }}
                     >
                       {loading ? <><Spinner size="sm" className="me-2" />{t('common.loading')}</> : t('fertilizer.getRecommendations')}
                     </Button>
-                  </div>
-                  {error && (
-                    <Alert variant="danger" dismissible onClose={() => setError(null)} className="mt-3 mb-0 py-2">
-                      <strong>Error:</strong> {error}
-                    </Alert>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col lg={8}>
-              <Card className="shadow-sm h-100 border-0">
-                <Card.Header className="bg-success text-white py-2">
-                  <h6 className="mb-0">{t('fertilizer.typeDistribution')}</h6>
-                </Card.Header>
-                <Card.Body className="p-3">
-                  {recommendations.length > 0 && fertilizerPieData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={260}>
-                      <PieChart>
-                        <Pie
-                          data={fertilizerPieData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {fertilizerPieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div className="text-muted text-center small py-4">
-                      {language === 'ur' ? 'توصیحات دیکھنے کے لیے فصل اور درجہ حرارت منتخب کریں' : 'Select crop and temperature to view fertilizer distribution'}
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+                  </Col>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+
+          {error && (
+            <Alert variant="danger" dismissible onClose={() => setError(null)} className="mb-3 py-2">
+              <strong>Error:</strong> {error}
+            </Alert>
+          )}
 
           {/* Charts Row - Side by Side */}
           {recommendations.length > 0 && (
@@ -248,21 +215,15 @@ function FertilizerPestControlPage({ username, onLogout }) {
                   </Card.Header>
                   <Card.Body className="p-2">
                     <ResponsiveContainer width="100%" height={280}>
-                      <BarChart data={npkData}>
+                      <BarChart data={npkData} margin={{ left: 10 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} fontSize={10} />
-                        <YAxis fontSize={10} />
+                        <YAxis width={45} tickFormatter={formatAxisTick} tickCount={6} fontSize={10} />
                         <Tooltip />
                         <Legend wrapperStyle={{ fontSize: '12px' }} />
-                        <Bar dataKey={t('fertilizer.nitrogen')} fill="#28a745">
-                          <LabelList dataKey={t('fertilizer.nitrogen')} position="top" style={{ fontSize: '10px', fill: '#333' }} />
-                        </Bar>
-                        <Bar dataKey={t('fertilizer.phosphorus')} fill="#007bff">
-                          <LabelList dataKey={t('fertilizer.phosphorus')} position="top" style={{ fontSize: '10px', fill: '#333' }} />
-                        </Bar>
-                        <Bar dataKey={t('fertilizer.potassium')} fill="#ffc107">
-                          <LabelList dataKey={t('fertilizer.potassium')} position="top" style={{ fontSize: '10px', fill: '#333' }} />
-                        </Bar>
+                        <Bar dataKey={t('fertilizer.nitrogen')} fill="#28a745" />
+                        <Bar dataKey={t('fertilizer.phosphorus')} fill="#007bff" />
+                        <Bar dataKey={t('fertilizer.potassium')} fill="#ffc107" />
                       </BarChart>
                     </ResponsiveContainer>
                   </Card.Body>
@@ -271,26 +232,55 @@ function FertilizerPestControlPage({ username, onLogout }) {
               <Col lg={6}>
                 <Card className="shadow-sm border-0 h-100">
                   <Card.Header className="bg-info text-white py-2">
-                    <h6 className="mb-0">Climate Factors Comparison</h6>
+                    <h6 className="mb-0">{t('fertilizer.typeDistribution')}</h6>
                   </Card.Header>
                   <Card.Body className="p-2">
                     <ResponsiveContainer width="100%" height={280}>
-                      <LineChart data={climateRadarData.slice(0, 8)}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="variety" angle={-45} textAnchor="end" height={80} fontSize={10} />
-                        <YAxis fontSize={10} />
+                      <PieChart>
+                        <Pie
+                          data={fertilizerPieData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={70}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {fertilizerPieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
                         <Tooltip />
-                        <Legend wrapperStyle={{ fontSize: '12px' }} />
-                        <Line type="monotone" dataKey="Temperature" stroke="#dc3545" strokeWidth={2} />
-                        <Line type="monotone" dataKey="Rainfall" stroke="#17a2b8" strokeWidth={2} />
-                        <Line type="monotone" dataKey="Humidity" stroke="#28a745" strokeWidth={2} />
-                        <Line type="monotone" dataKey="Climate Score" stroke="#ffc107" strokeWidth={2} />
-                      </LineChart>
+                      </PieChart>
                     </ResponsiveContainer>
                   </Card.Body>
                 </Card>
               </Col>
             </Row>
+          )}
+
+          {/* Climate Comparison Chart */}
+          {recommendations.length > 0 && (
+            <Card className="shadow-sm mb-3 border-0">
+              <Card.Header className="bg-warning text-dark py-2">
+                <h6 className="mb-0">Climate Factors Comparison</h6>
+              </Card.Header>
+              <Card.Body className="p-2">
+                <ResponsiveContainer width="100%" height={300}>
+                  <RadarChart data={climateRadarData.slice(0, 5)}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="variety" fontSize={10} />
+                    <PolarRadiusAxis tickFormatter={(v) => Math.round(v)} tickCount={5} fontSize={10} />
+                    <Radar name="Temperature" dataKey="Temperature" stroke="#dc3545" fill="#dc3545" fillOpacity={0.6} />
+                    <Radar name="Rainfall" dataKey="Rainfall" stroke="#17a2b8" fill="#17a2b8" fillOpacity={0.6} />
+                    <Radar name="Humidity" dataKey="Humidity" stroke="#28a745" fill="#28a745" fillOpacity={0.6} />
+                    <Radar name="Climate Score" dataKey="Climate Score" stroke="#ffc107" fill="#ffc107" fillOpacity={0.6} />
+                    <Legend wrapperStyle={{ fontSize: '12px' }} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
           )}
 
           {/* Detailed Recommendations - Compact Grid */}
@@ -321,19 +311,19 @@ function FertilizerPestControlPage({ username, onLogout }) {
                             </div>
                             <Row className="text-center mb-2">
                               <Col xs={4}>
-                                <div className="p-2 bg-light rounded" title="Nitrogen">
+                                <div className="p-2 bg-light rounded">
                                   <div className="text-muted" style={{ fontSize: '10px' }}>N</div>
                                   <div className="fw-bold text-success">{rec.nitrogen || 'N/A'}</div>
                                 </div>
                               </Col>
                               <Col xs={4}>
-                                <div className="p-2 bg-light rounded" title="Phosphorus">
+                                <div className="p-2 bg-light rounded">
                                   <div className="text-muted" style={{ fontSize: '10px' }}>P</div>
                                   <div className="fw-bold text-info">{rec.phosphorus || 'N/A'}</div>
                                 </div>
                               </Col>
                               <Col xs={4}>
-                                <div className="p-2 bg-light rounded" title="Potassium">
+                                <div className="p-2 bg-light rounded">
                                   <div className="text-muted" style={{ fontSize: '10px' }}>K</div>
                                   <div className="fw-bold text-warning">{rec.potassium || 'N/A'}</div>
                                 </div>
@@ -441,8 +431,8 @@ function FertilizerPestControlPage({ username, onLogout }) {
           {recommendations.length === 0 && !loading && (
             <Card className="text-center py-4 border-0 shadow-sm">
               <Card.Body>
-                <h5>{t('fertilizer.getStarted')}</h5>
-                <p className="text-muted mb-0 small">{t('fertilizer.getStartedDesc')}</p>
+                <h5>Get Fertilizer & Pest Control Recommendations</h5>
+                <p className="text-muted mb-0 small">Select a crop and temperature category to get expert recommendations</p>
               </Card.Body>
             </Card>
           )}
