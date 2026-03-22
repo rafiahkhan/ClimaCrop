@@ -41,13 +41,13 @@ ClimaCrop is an intelligent crop recommendation system that leverages multiple A
 </p>
 
 <p align="center">
-  <img src="2.png" alt="Home dashboard" width="800"/>
+  <img src="https://github.com/user-attachments/assets/f0823788-f22f-403d-a9ba-03ee1ad0874d" width="800"/>
   <br/>
   <em>Home dashboard with feature cards</em>
 </p>
 
 <p align="center">
-  <img src="3.png" alt="Fertilizer & Pest Control" width="800"/>
+  <img src="https://github.com/user-attachments/assets/9ff32104-df93-4834-9e39-4ea90b8e0c02" width="800"/>
   <br/>
   <em>Fertilizer & Pest Control recommendations</em>
 </p>>
