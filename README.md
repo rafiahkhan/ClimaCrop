@@ -35,7 +35,7 @@ ClimaCrop is an intelligent crop recommendation system that leverages multiple A
 ## Screenshots
 
 <p align="center">
-  <img src="<img width="3586" height="1936" alt="Image" src="https://github.com/user-attachments/assets/973090ed-4c5d-47c1-b230-7d66de3cafd4" />" alt="Login page" width="800"/>
+  <img src=" width="3586" height="1936" alt="Image" src="https://github.com/user-attachments/assets/973090ed-4c5d-47c1-b230-7d66de3cafd4" />"
   <br/>
   <em>Login & landing page</em>
 </p>
