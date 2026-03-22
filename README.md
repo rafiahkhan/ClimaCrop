@@ -50,7 +50,7 @@ ClimaCrop is an intelligent crop recommendation system that leverages multiple A
   <img src="https://github.com/user-attachments/assets/9ff32104-df93-4834-9e39-4ea90b8e0c02" width="800"/>
   <br/>
   <em>Fertilizer & Pest Control recommendations</em>
-</p>>
+</p>
 
 ---
 ## Features
@@ -279,7 +279,6 @@ ClimaCrop_gt/
 ├── .env.example                     # Environment variables template
 ├── .gitignore                       # Git ignore rules
 ├── START_BOTH.sh                    # Startup script
-├── STOP.sh                          # Stop script
 └── README.md                        # This file
 ```
 
