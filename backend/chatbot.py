@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Gemini Configuration
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyBcuhuoRJCVURnmoj_0_qu98MS-znCwPD4")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "Your Key")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 GEMINI_TEMPERATURE = float(os.getenv("GEMINI_TEMPERATURE", "0.7"))
 GEMINI_MAX_TOKENS = int(os.getenv("GEMINI_MAX_TOKENS", "2048"))
