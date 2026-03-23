@@ -470,7 +470,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For questions, issues, or contributions:
 
-- **Data requests**: Need the sample dataset? Email us or message on [LinkedIn](https://www.linkedin.com/in/rafiahkhan)—see the Data section above.
+- **Data requests**: Need the sample dataset? Email us or message on [Rafia Khan](https://www.linkedin.com/in/rafia-khan-662327310/)—see the Data section above.
 - **Bugs & features**: Open an issue on [GitHub](https://github.com/rafiahkhan/ClimaCrop/issues)
 - **Documentation**: Check the troubleshooting section and API docs
 
