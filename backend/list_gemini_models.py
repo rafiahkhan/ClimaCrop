@@ -5,7 +5,7 @@ import google.generativeai as genai
 import os
 
 # Load API key
-API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyBcuhuoRJCVURnmoj_0_qu98MS-znCwPD4")
+API_KEY = os.getenv("GEMINI_API_KEY", "Your Key")
 genai.configure(api_key=API_KEY)
 
 print("🔍 Listing available Gemini models...\n")
